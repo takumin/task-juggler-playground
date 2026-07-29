@@ -6,14 +6,6 @@
 `now` より前には新たな割当をせず、**残作業だけを `now` 以降に再配置する**
 (projection モード)。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 06-progress/out 06-progress/progress.tjp
-```
-
-生成物: `out/progress.html`、`out/people.html`
-
 ## 学ぶ内容
 
 - `trackingscenario` — 実績を記録するシナリオの指定

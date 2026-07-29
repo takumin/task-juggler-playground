@@ -3,13 +3,12 @@
 タスクをツリーに組み、依存関係を正しく張る。TaskJuggler で最初につまずくのは
 たいてい依存の参照記法なので、ここを固めておく。
 
-## 実行
+## レポートの内容
 
-```sh
-bundle exec tj3 -o 02-structure/out 02-structure/structure.tjp
-```
-
-生成物: `out/structure.html` (ガントチャート)、`out/workload.html` (リソース別負荷)
+| ファイル | 内容 |
+|---|---|
+| `structure.html` | ガントチャート |
+| `workload.html` | リソース別の負荷 |
 
 ## 学ぶ内容
 

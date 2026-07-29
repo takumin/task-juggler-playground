@@ -5,13 +5,7 @@
 同じタスクツリーに対して `hidetask` / `hideresource` の条件だけを変えた
 レポートを 10 種類並べてある。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 08-filters/out 08-filters/filters.tjp
-```
-
-生成物 (10 件):
+## レポートの内容
 
 | ファイル | フィルタ条件 |
 |---|---|

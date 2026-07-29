@@ -89,6 +89,13 @@ def split_nav(html)
   separator.empty? ? [html, ""] : [body, nav]
 end
 
+# 段階 README の冒頭 (h1 と導入文) と、最初の h2 以降の本文に分ける。
+# ページを「タイトルと導入 → 生成物 → ソース → 解説」の順に組むため
+def split_lead(html)
+  index = html.index(/<h2[\s>]/)
+  index ? [html[0...index], html[index..]] : [html, ""]
+end
+
 # README の h1 をページタイトルに使う
 def markdown_title(path, fallback)
   line = File.foreach(path).find { |l| l.start_with?("# ") }
@@ -159,7 +166,8 @@ def artifact_section(stage)
 end
 
 # tjp / tji はコメントが教材の本体なので、そのまま読めるように載せる。
-# エントリポイントだけ開いた状態にする
+# 解説より前に置くので、開いた状態にはしない (200 行のソースが本文を押し下げる)。
+# エントリポイントを先頭にする
 def source_section(stage)
   entry = File.basename(entrypoint(stage))
   files = Dir.glob(File.join(ROOT, stage, "*.{tjp,tji}"))
@@ -169,9 +177,8 @@ def source_section(stage)
 
   blocks = files.map do |name|
     code = esc(File.read(File.join(ROOT, stage, name)))
-    open = name == entry ? " open" : ""
     <<~HTML.strip
-      <details class="source"#{open}>
+      <details class="source">
       <summary>#{esc(name)}</summary>
       <pre><code>#{code}</code></pre>
       </details>
@@ -202,10 +209,12 @@ def build_stage(stage, output)
 
   title = markdown_title(readme, stage)
   readme_html, nav = split_nav(markdown_to_html(readme))
+  lead, rest = split_lead(readme_html)
   body = [
-    %(<article class="readme">\n#{readme_html}</article>),
+    %(<article class="readme lead">\n#{lead}</article>),
     artifact_section(stage),
     source_section(stage),
+    rest.empty? ? "" : %(<article class="readme">\n#{rest}</article>),
     nav.empty? ? "" : %(<footer class="stage-nav">\n#{nav}</footer>)
   ].reject(&:empty?).join("\n")
 

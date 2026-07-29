@@ -2,14 +2,6 @@
 
 スケジューラに「いつ置くか」を指示する手段を一通り試す。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 05-constraints/out 05-constraints/constraints.tjp
-```
-
-生成物: `out/tasks.html`
-
 ## 学ぶ内容
 
 - `scheduling asap` / `alap` — 前詰めと後ろ詰め

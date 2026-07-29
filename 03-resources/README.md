@@ -5,14 +5,6 @@
 すべてのタスクを 08-03 から並列に走らせ、**割当条件の違いだけ**で期間がどう変わるかを
 比較できるようにしてある (タスクごとに専用の担当を割り当ててリソース競合を排除している)。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 03-resources/out 03-resources/resources.tjp
-```
-
-生成物: `out/tasks.html`、`out/people.html`
-
 ## 学ぶ内容
 
 - `resource` の入れ子によるチーム階層、`managers`

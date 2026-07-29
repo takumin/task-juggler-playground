@@ -3,14 +3,6 @@
 規模が大きくなったときのファイル構成。計画と実績を別ファイルに分け、
 定型部分をマクロにまとめ、独自の属性を足す。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 11-modular/out 11-modular/main.tjp
-```
-
-生成物: `out/01-plan.html`、`out/02-progress.html`、`out/03-people.html`
-
 ## ファイル構成
 
 | ファイル | 役割 |

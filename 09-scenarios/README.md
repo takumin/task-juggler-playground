@@ -3,14 +3,6 @@
 同じタスクツリーを、条件だけ変えた複数のシナリオで**同時に**スケジュールし、
 結果を横並びで比較する。what-if 分析の基礎。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 09-scenarios/out 09-scenarios/scenarios.tjp
-```
-
-生成物: `out/01-compare.html`、`out/02-milestones.html`、`out/03-gantt.html`
-
 ## 学ぶ内容
 
 - `scenario` の入れ子定義と継承
@@ -45,7 +37,9 @@ task impl "実装" {
 }
 ```
 
-どの属性がシナリオ固有かは `bundle exec tj3man task` の **`[sc]` マーク**で分かる。
+どの属性がシナリオ固有かは
+[task のリファレンス](https://taskjuggler.org/tj3/manual/task.html) の
+**`[sc]` マーク**で分かる。
 `effort` / `duration` / `allocate` / `depends` / `start` / `priority` などが該当する。
 
 ## 実行結果

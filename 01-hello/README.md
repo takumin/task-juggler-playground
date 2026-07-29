@@ -2,14 +2,6 @@
 
 TaskJuggler の最小構成。プロジェクトを宣言し、人を定義し、タスクを並べ、HTML レポートを出すまでの一往復を通す。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 01-hello/out 01-hello/hello.tjp
-```
-
-生成物: `out/overview.html`
-
 ## 学ぶ内容
 
 - `project` の宣言 — ID / 名前 / 開始日 / 期間 (`+2m` のような相対指定)

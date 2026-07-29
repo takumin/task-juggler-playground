@@ -3,14 +3,6 @@
 工数だけでなく金額を扱う。リソース単価から人件費を積み上げ、
 固定費と売上を加えて収支を出す。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 10-cost/out 10-cost/cost.tjp
-```
-
-生成物: `out/01-balance.html`、`out/02-task-cost.html`、`out/03-resource-cost.html`
-
 ## 学ぶ内容
 
 - `account` — 勘定科目の定義 (入れ子可)

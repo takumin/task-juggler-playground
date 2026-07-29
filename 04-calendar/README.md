@@ -5,14 +5,6 @@
 全員に同じ **10 人日**のタスクを割り当て、カレンダー設定の違いだけで終了日が
 どれだけずれるかを比較できるようにしてある。
 
-## 実行
-
-```sh
-bundle exec tj3 -o 04-calendar/out 04-calendar/calendar.tjp
-```
-
-生成物: `out/tasks.html`、`out/people.html`
-
 ## 学ぶ内容
 
 - `workinghours` — project / resource / shift の3レベル
