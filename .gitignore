@@ -12,6 +12,10 @@
 # tj3 を実行すればいつでも再生成できる
 out/
 
+# GitHub Pages 用に組み立てたサイト
+# tools/build-site.rb でいつでも再生成できる
+/site/
+
 # OS / エディタ
 .DS_Store
 *~

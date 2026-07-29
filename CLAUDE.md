@@ -50,6 +50,18 @@ ruby tools/dump-report.rb <生成された html>
 | 11 | `11-modular/` | **`main.tjp`** | ファイル分割 (`.tji` は単体で実行不可) |
 | 12 | `12-operations/` | `operations.tjp` | 運用・チーム連携 |
 
+## GitHub Pages
+
+`main` への push で `.github/workflows/pages.yml` が全段階を並列ビルドし、
+README・レポート・tjp ソースを 1 ページにまとめて公開する。
+生成は `tools/build-site.rb` (`stages` / `entrypoint` / `stage` / `index` の 4 サブコマンド)。
+組み立て手順は README の「サイトの生成」にある。
+
+- 段階ディレクトリを増やしてもワークフローの変更は要らない (`stages` が拾う)
+- 段階の tjp が複数あるとエントリポイントを決められない。分割するなら `main.tjp` に寄せる
+- Markdown 変換は kramdown の **GFM パーサ**。素の kramdown は ``` を解釈しない
+- `<details>` の中の Markdown を変換させるには `<details markdown="1">` と書く
+
 ## リファレンス
 
 構文は推測しない。必ず引く。

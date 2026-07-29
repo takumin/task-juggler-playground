@@ -1,0 +1,103 @@
+# 12 段階を並列に tj3 でビルドし、GitHub Pages に配置する。
+#
+# 段階ごとに独立した artifact を作り、deploy ジョブで 1 つのサイトにまとめる。
+# 段階ディレクトリを増やしても discover が拾うので、この定義は変更しなくてよい。
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# デプロイ中の実行は止めない (途中で止めると公開内容が中途半端になる)
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: 段階を列挙
+    runs-on: ubuntu-latest
+    outputs:
+      stages: ${{ steps.list.outputs.stages }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        # gem を必要としないサブコマンドなので bundle install より前に実行できる
+        run: echo "stages=$(ruby tools/build-site.rb stages)" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.stage }}
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: ${{ fromJSON(needs.discover.outputs.stages) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0"
+          bundler-cache: true
+
+      # tj3 はレポートの出力先をカレントディレクトリ基準で解決するため
+      # 必ずリポジトリルートから実行する
+      - name: tj3 を実行
+        run: |
+          entry=$(bundle exec ruby tools/build-site.rb entrypoint "${{ matrix.stage }}")
+          bundle exec tj3 -o "${{ matrix.stage }}/out" "$entry"
+
+      - name: 段階ページを生成
+        run: bundle exec ruby tools/build-site.rb stage "${{ matrix.stage }}" --output site
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ matrix.stage }}
+          # site/ ごと上げることで、まとめるときに段階名のディレクトリが残る
+          path: site/
+          retention-days: 1
+
+  deploy:
+    name: サイトをまとめて公開
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0"
+          bundler-cache: true
+
+      - name: トップページと共通 CSS を生成
+        run: bundle exec ruby tools/build-site.rb index --output site
+
+      - name: 段階ページを取り込む
+        uses: actions/download-artifact@v4
+        with:
+          path: site
+          pattern: site-*
+          merge-multiple: true
+
+      # Pages が未設定のリポジトリでも初回の実行で有効化する
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

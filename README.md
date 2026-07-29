@@ -5,6 +5,10 @@ TaskJuggler 3.8.4 を段階的に学ぶためのサンプル集。
 各段階に**実際に動く `.tjp`** と、その段階の解説 README を置いてある。
 条件だけを変えた比較になるよう作ってあるので、読むだけでなく数値の差で確認できる。
 
+**解説・生成されたレポート・tjp のソースをまとめたサイトを公開している。**
+手元に環境を作らずブラウザだけで読み進めたいならこちら:
+<https://takumin.github.io/task-juggler-playground/>
+
 ## セットアップ
 
 ```sh
@@ -35,7 +39,7 @@ bundle exec tj3 -o 01-hello/out 01-hello/hello.tjp
 ruby tools/dump-report.rb 01-hello/out/overview.html
 ```
 
-<details>
+<details markdown="1">
 <summary>全段階をまとめて実行する</summary>
 
 ```sh
@@ -143,8 +147,13 @@ bundle exec tj3man task              # task の属性一覧 ([sc] = シナリオ
 
 ```
 .
-├── Gemfile / Gemfile.lock   taskjuggler 3.8.4 + base64 + drb
-├── tools/dump-report.rb     生成 HTML から表だけを抜き出す確認用スクリプト
+├── Gemfile / Gemfile.lock   taskjuggler 3.8.4 + base64 / drb / kramdown
+├── tools/
+│   ├── dump-report.rb       生成 HTML から表だけを抜き出す確認用スクリプト
+│   ├── build-site.rb        GitHub Pages 用サイトの生成
+│   └── site.css             同上のスタイル
+├── .github/workflows/
+│   └── pages.yml            12 段階を並列ビルドして Pages に配置する
 ├── NN-<name>/
 │   ├── *.tjp                教材本体 (解説はコメントとして記述)
 │   ├── README.md            その段階の解説
@@ -154,3 +163,28 @@ bundle exec tj3man task              # task の属性一覧 ([sc] = シナリオ
 ```
 
 各ディレクトリで Claude Code を起動すると、その段階に特化した `CLAUDE.md` が読み込まれる。
+
+## サイトの生成
+
+`main` に push すると GitHub Actions が全段階を並列に `tj3` にかけ、
+README・レポート・tjp ソースを 1 ページにまとめたサイトを Pages に配置する。
+
+手元で同じものを組み立てて確認するには:
+
+```sh
+bundle exec ruby tools/build-site.rb index --output site
+
+for s in $(bundle exec ruby tools/build-site.rb stages | tr -d '[]"' | tr ',' ' '); do
+  bundle exec tj3 -o "$s/out" "$(bundle exec ruby tools/build-site.rb entrypoint "$s")"
+  bundle exec ruby tools/build-site.rb stage "$s" --output site
+done
+
+python3 -m http.server 8000 --directory site
+```
+
+`site/` は生成物なので追跡していない。段階ディレクトリを増やしても
+`stages` が拾うため、ワークフローの変更は要らない。
+
+サイトの Markdown 変換には kramdown の GFM パーサを使っている。
+`<details>` の中に書いた Markdown を変換させるには
+`<details markdown="1">` と書く (GitHub 側の表示には影響しない)。
