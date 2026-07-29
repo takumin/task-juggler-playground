@@ -57,7 +57,7 @@ TaskJuggler 3.8.4 を段階的に学ぶためのサンプル集。
 - [columnid](https://taskjuggler.org/tj3/manual/columnid.html) — レポートで使える列の一覧
 - [task](https://taskjuggler.org/tj3/manual/task.html) — task の属性一覧 (`[sc]` = シナリオ固有)
 
-各段階に「この段階で扱うキーワード」を挙げてあるので、そこから引くのが早い。
+各段階の「学ぶ内容」に挙げたキーワードは、公式マニュアルの該当ページへリンクしてある。
 冒頭に **Warning** が出るキーワードは非推奨か未テスト。
 
 ## 横断的なハマりどころ
@@ -91,8 +91,8 @@ TaskJuggler 3.8.4 を段階的に学ぶためのサンプル集。
 
 ### レポート出力
 
-- `export` と `timesheetreport` は `-o` / `outputdir` が**効かない**。
-  常にカレントディレクトリ基準なので、出力先はファイル名側にパスを書く
+- `export` と `timesheetreport` は `outputdir` が**効かない**。
+  出力先を分けたいならレポート名側にパスを書く
 - 両者とも拡張子は自動付与。`.tji` まで書くと `.tji.tji` になる
 
 ### 非推奨・未テストのキーワード
