@@ -5,17 +5,12 @@
 すべてのタスクを 08-03 から並列に走らせ、**割当条件の違いだけ**で期間がどう変わるかを
 比較できるようにしてある (タスクごとに専用の担当を割り当ててリソース競合を排除している)。
 
-## 学ぶ内容
+## レポートの内容
 
-- [`resource`][resource] — 入れ子によるチーム階層
-- [`managers`][managers] — 管理者の記録
-- [`allocate`][allocate] — 担当の割当。複数を並行投入すると期間が縮む
-- [`alternative`][alternative] / [`select`][select] / [`persistent`][persistent] / [`mandatory`][mandatory] — 割当の選択制御
-- [`efficiency`][efficiency] — 生産性の係数
-- [`limits`][limits] — 1日/1週/1月あたりの上限
-- [`purge`][purge] — 継承した属性のリセット
-
-## 実行結果
+| ファイル | 内容 |
+|---|---|
+| `tasks.html` | 割当条件による期間の違い |
+| `people.html` | リソース別の負荷 (チーム階層つき) |
 
 同じ **10 人日** のタスクを、割当条件だけ変えた比較。
 
@@ -27,6 +22,16 @@
 | ④ | `limits { dailymax 4h }` | 08-03 → 08-28 | 20 営業日 (1日4hまで) |
 | ⑤ | `alternative` + `select` | 08-03 → 08-14 | Grace が選ばれた |
 | ⑥ | 会議 (`mandatory` × 2) | 08-03 | 工数 0.3 (会議室は 0 人日) |
+
+## 学ぶ内容
+
+- [`resource`][resource] — 入れ子によるチーム階層
+- [`managers`][managers] — 管理者の記録
+- [`allocate`][allocate] — 担当の割当。複数を並行投入すると期間が縮む
+- [`alternative`][alternative] / [`select`][select] / [`persistent`][persistent] / [`mandatory`][mandatory] — 割当の選択制御
+- [`efficiency`][efficiency] — 生産性の係数
+- [`limits`][limits] — 1日/1週/1月あたりの上限
+- [`purge`][purge] — 継承した属性のリセット
 
 ## select の選び方
 

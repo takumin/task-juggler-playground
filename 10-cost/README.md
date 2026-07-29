@@ -3,18 +3,13 @@
 工数だけでなく金額を扱う。リソース単価から人件費を積み上げ、
 固定費と売上を加えて収支を出す。
 
-## 学ぶ内容
+## レポートの内容
 
-- [`account`][account] — 勘定科目の定義 (入れ子可)
-- [`aggregate`][aggregate] — その科目が何に由来する金額を集めるか
-- [`rate`][rate] — リソースの日額単価
-- [`chargeset`][chargeset] — どの科目に付けるか (按分も可能)
-- [`charge`][charge] — 一時費用・継続費用
-- [`balance`][balance] — 収支分析の対象指定
-- [`accountreport`][accountreport] — 科目ごとの集計表
-- [`currency`][currency] / [`currencyformat`][currencyformat] — 通貨と数値の書式
-
-## 実行結果
+| ファイル | 内容 |
+|---|---|
+| `01-balance.html` | 科目ごとの収支サマリー (月次の推移つき) |
+| `02-task-cost.html` | タスク別の費用と収益 |
+| `03-resource-cost.html` | リソース別の単価と稼働 |
 
 ### 収支サマリー
 
@@ -38,6 +33,17 @@
 
 設計の 250,000 は「5 人日 × Alice の日額 50,000」。
 リソースの `rate` が、そのタスクの原価として積み上がっている。
+
+## 学ぶ内容
+
+- [`account`][account] — 勘定科目の定義 (入れ子可)
+- [`aggregate`][aggregate] — その科目が何に由来する金額を集めるか
+- [`rate`][rate] — リソースの日額単価
+- [`chargeset`][chargeset] — どの科目に付けるか (按分も可能)
+- [`charge`][charge] — 一時費用・継続費用
+- [`balance`][balance] — 収支分析の対象指定
+- [`accountreport`][accountreport] — 科目ごとの集計表
+- [`currency`][currency] / [`currencyformat`][currencyformat] — 通貨と数値の書式
 
 ## aggregate — この段階の核心
 

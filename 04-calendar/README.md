@@ -5,14 +5,12 @@
 全員に同じ **10 人日**のタスクを割り当て、カレンダー設定の違いだけで終了日が
 どれだけずれるかを比較できるようにしてある。
 
-## 学ぶ内容
+## レポートの内容
 
-- `workinghours` — 稼働時間帯。[project][workinghours.project] / [resource][workinghours.resource] / [shift][workinghours.shift] の3レベルで指定する
-- [`dailyworkinghours`][dailyworkinghours] / [`yearlyworkingdays`][yearlyworkingdays] — 工数と日数の換算係数
-- [`leaves`][leaves] — 祝日・休暇の定義
-- [`shift`][shift] / [`shifts`][shifts] — 稼働時間パターンの定義とリソースへの割当
-
-## 実行結果
+| ファイル | 内容 |
+|---|---|
+| `tasks.html` | カレンダー設定による期間の違い |
+| `people.html` | 稼働状況 (ガントの網掛けが非稼働) |
 
 同じ **10 人日**を、カレンダー条件だけ変えて比較。
 
@@ -22,6 +20,15 @@
 | ② | 夏季休暇あり (8/13〜8/16) | 08-03 → 08-19 |
 | ③ | 時短シフト (3h/日) | 08-03 → 09-09 |
 | ④ | 週4日勤務 (金曜休み) | 08-03 → 08-19 |
+
+祝日と休暇が実際にどこで空いているかは `people.html` の網掛けで確認できる。
+
+## 学ぶ内容
+
+- `workinghours` — 稼働時間帯。[project][workinghours.project] / [resource][workinghours.resource] / [shift][workinghours.shift] の3レベルで指定する
+- [`dailyworkinghours`][dailyworkinghours] / [`yearlyworkingdays`][yearlyworkingdays] — 工数と日数の換算係数
+- [`leaves`][leaves] — 祝日・休暇の定義
+- [`shift`][shift] / [`shifts`][shifts] — 稼働時間パターンの定義とリソースへの割当
 
 ## leaves の種別と優先度
 

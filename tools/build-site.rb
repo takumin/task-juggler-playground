@@ -89,11 +89,15 @@ def split_nav(html)
   separator.empty? ? [html, ""] : [body, nav]
 end
 
-# 段階 README の冒頭 (h1 と導入文) と、最初の h2 以降の本文に分ける。
-# ページを「タイトルと導入 → 生成物 → ソース → 解説」の順に組むため
-def split_lead(html)
-  index = html.index(/<h2[\s>]/)
-  index ? [html[0...index], html[index..]] : [html, ""]
+# 段階 README を「h1 と導入文」「最初の h2 の節」「2 番目以降の h2」に分ける。
+# ページを「タイトルと導入 → 生成物 → レポートの内容 → ソース → 解説」の順に組むため。
+# 最初の h2 はどの段階も「レポートの内容」で、生成物一覧の直後に置く
+def split_readme(html)
+  first, second = html.to_enum(:scan, /<h2[\s>]/).map { Regexp.last_match.begin(0) }.first(2)
+  return [html, "", ""] unless first
+  return [html[0...first], html[first..], ""] unless second
+
+  [html[0...first], html[first...second], html[second..]]
 end
 
 # README の h1 をページタイトルに使う
@@ -166,8 +170,8 @@ def artifact_section(stage)
 end
 
 # tjp / tji はコメントが教材の本体なので、そのまま読めるように載せる。
-# 解説より前に置くので、開いた状態にはしない (200 行のソースが本文を押し下げる)。
-# エントリポイントを先頭にする
+# 「レポートの内容」と解説の間に挟むので、開いた状態にはしない
+# (200 行のソースが解説を押し下げる)。エントリポイントを先頭にする
 def source_section(stage)
   entry = File.basename(entrypoint(stage))
   files = Dir.glob(File.join(ROOT, stage, "*.{tjp,tji}"))
@@ -209,10 +213,11 @@ def build_stage(stage, output)
 
   title = markdown_title(readme, stage)
   readme_html, nav = split_nav(markdown_to_html(readme))
-  lead, rest = split_lead(readme_html)
+  lead, report, rest = split_readme(readme_html)
   body = [
     %(<article class="readme lead">\n#{lead}</article>),
     artifact_section(stage),
+    report.empty? ? "" : %(<article class="readme report">\n#{report}</article>),
     source_section(stage),
     rest.empty? ? "" : %(<article class="readme">\n#{rest}</article>),
     nav.empty? ? "" : %(<footer class="stage-nav">\n#{nav}</footer>)

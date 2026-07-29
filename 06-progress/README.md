@@ -6,15 +6,12 @@
 `now` より前には新たな割当をせず、**残作業だけを `now` 以降に再配置する**
 (projection モード)。
 
-## 学ぶ内容
+## レポートの内容
 
-- [`trackingscenario`][trackingscenario] — 実績を記録するシナリオの指定
-- [`booking`][booking] — 実際に作業した時間の記録
-- [`sloppy`][sloppy] — booking の衝突チェックの緩さ
-- [`complete`][complete] — 進捗率の手入力
-- [`now`][now] — 計画と実績の境界。スケジュール結果に効く
-
-## 実行結果
+| ファイル | 内容 |
+|---|---|
+| `progress.html` | 実績を反映したスケジュール (`complete` / `gauge` 列つき) |
+| `people.html` | リソース別の実績と予定 |
 
 `now = 2026-08-17` のときのスケジュール。
 
@@ -29,6 +26,14 @@
 再スケジュールされて** 08-21 終了になっている。
 ③ は booking がないので `now` から開始する扱いになり、`complete 60` との
 ギャップが "ahead of schedule" として出ている。
+
+## 学ぶ内容
+
+- [`trackingscenario`][trackingscenario] — 実績を記録するシナリオの指定
+- [`booking`][booking] — 実際に作業した時間の記録
+- [`sloppy`][sloppy] — booking の衝突チェックの緩さ
+- [`complete`][complete] — 進捗率の手入力
+- [`now`][now] — 計画と実績の境界。スケジュール結果に効く
 
 ## booking と complete の違い
 

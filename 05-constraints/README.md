@@ -2,17 +2,13 @@
 
 スケジューラに「いつ置くか」を指示する手段を一通り試す。
 
-## 学ぶ内容
+## レポートの内容
 
-- [`scheduling`][scheduling] — `asap` (前詰め) と `alap` (後ろ詰め)
-- [`start`][start] / [`end`][end] — 日付による固定
-- [`minstart`][minstart] / [`maxstart`][maxstart] / [`minend`][minend] / [`maxend`][maxend] — 日付による事後検査
-- [`warn`][warn] / [`fail`][fail] — 論理式による事後検査
-- [`priority`][priority] — リソース競合時にどちらが先に確保するか
-- [`precedes`][precedes] — [`depends`][depends] の逆向き
-- [`responsible`][responsible] / [`flags`][flags] — 分類用の属性
+| ファイル | 内容 |
+|---|---|
+| `tasks.html` | 制約による配置の違い (`responsible` 列つき) |
 
-## 実行結果
+レポートは開始日の順に並ぶ。主なものを抜き出すと次のとおり。
 
 | タスク | 開始 | 終了 | 効いている制約 |
 |---|---|---|---|
@@ -25,6 +21,16 @@
 
 ⑤a と ⑤b は同じ Bob を奪い合う。`priority` の高い ⑤a が先に確保し、
 ⑤b は空くまで押し出される。
+
+## 学ぶ内容
+
+- [`scheduling`][scheduling] — `asap` (前詰め) と `alap` (後ろ詰め)
+- [`start`][start] / [`end`][end] — 日付による固定
+- [`minstart`][minstart] / [`maxstart`][maxstart] / [`minend`][minend] / [`maxend`][maxend] — 日付による事後検査
+- [`warn`][warn] / [`fail`][fail] — 論理式による事後検査
+- [`priority`][priority] — リソース競合時にどちらが先に確保するか
+- [`precedes`][precedes] — [`depends`][depends] の逆向き
+- [`responsible`][responsible] / [`flags`][flags] — 分類用の属性
 
 ## ASAP と ALAP
 
