@@ -4,13 +4,13 @@
 
 ## 学ぶ内容
 
-- `scheduling asap` / `alap` — 前詰めと後ろ詰め
-- `start` / `end` による固定
-- `minstart` / `maxstart` / `minend` / `maxend` — 事後検査 (違反は**エラー**)
-- `warn` / `fail` — 論理式による事後検査 (`warn` は**警告**で済む)
-- `priority` — リソース競合時にどちらが先に確保するか
-- `precedes` — `depends` の逆向き
-- `responsible` / `flags` — 分類用の属性
+- [`scheduling asap`][scheduling] / `alap` — 前詰めと後ろ詰め
+- [`start`][start] / [`end`][end] による固定
+- [`minstart`][minstart] / [`maxstart`][maxstart] / [`minend`][minend] / [`maxend`][maxend] — 事後検査 (違反は**エラー**)
+- [`warn`][warn] / [`fail`][fail] — 論理式による事後検査 (`warn` は**警告**で済む)
+- [`priority`][priority] — リソース競合時にどちらが先に確保するか
+- [`precedes`][precedes] — [`depends`][depends] の逆向き
+- [`responsible`][responsible] / [`flags`][flags] — 分類用の属性
 
 ## 実行結果
 
@@ -67,3 +67,20 @@
 ---
 
 ← [04. カレンダー](../04-calendar/README.md) | [README (全体)](../README.md) | 次 → [06. 進捗と実績](../06-progress/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[scheduling]: https://taskjuggler.org/tj3/manual/scheduling.html
+[start]: https://taskjuggler.org/tj3/manual/start.html
+[end]: https://taskjuggler.org/tj3/manual/end.html
+[minstart]: https://taskjuggler.org/tj3/manual/minstart.html
+[maxstart]: https://taskjuggler.org/tj3/manual/maxstart.html
+[minend]: https://taskjuggler.org/tj3/manual/minend.html
+[maxend]: https://taskjuggler.org/tj3/manual/maxend.html
+[warn]: https://taskjuggler.org/tj3/manual/warn.html
+[fail]: https://taskjuggler.org/tj3/manual/fail.html
+[priority]: https://taskjuggler.org/tj3/manual/priority.html
+[precedes]: https://taskjuggler.org/tj3/manual/precedes.html
+[depends]: https://taskjuggler.org/tj3/manual/depends.html
+[responsible]: https://taskjuggler.org/tj3/manual/responsible.html
+[flags]: https://taskjuggler.org/tj3/manual/flags.task.html

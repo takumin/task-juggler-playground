@@ -7,11 +7,11 @@
 
 ## 学ぶ内容
 
-- `workinghours` — project / resource / shift の3レベル
-- `dailyworkinghours` / `yearlyworkingdays` — 工数と日数の換算係数
-- `leaves` — 祝日・休暇。種別ごとに優先度がある
-- `shift` / `shifts` — 稼働時間パターンを再利用可能な形で定義する
-- `weekstartsmonday`、`timingresolution`
+- `workinghours` — [project][workinghours.project] / [resource][workinghours.resource] / [shift][workinghours.shift] の3レベル
+- [`dailyworkinghours`][dailyworkinghours] / [`yearlyworkingdays`][yearlyworkingdays] — 工数と日数の換算係数
+- [`leaves`][leaves] — 祝日・休暇。種別ごとに優先度がある
+- [`shift`][shift] / [`shifts`][shifts] — 稼働時間パターンを再利用可能な形で定義する
+- [`weekstartsmonday`][weekstartsmonday]、[`timingresolution`][timingresolution]
 
 ## 実行結果
 
@@ -54,3 +54,16 @@ project < annual < special < sick < unpaid < holiday < unemployed
 ---
 
 ← [03. リソース](../03-resources/README.md) | [README (全体)](../README.md) | 次 → [05. 制約](../05-constraints/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[workinghours.project]: https://taskjuggler.org/tj3/manual/workinghours.project.html
+[workinghours.resource]: https://taskjuggler.org/tj3/manual/workinghours.resource.html
+[workinghours.shift]: https://taskjuggler.org/tj3/manual/workinghours.shift.html
+[dailyworkinghours]: https://taskjuggler.org/tj3/manual/dailyworkinghours.html
+[yearlyworkingdays]: https://taskjuggler.org/tj3/manual/yearlyworkingdays.html
+[leaves]: https://taskjuggler.org/tj3/manual/leaves.html
+[shift]: https://taskjuggler.org/tj3/manual/shift.html
+[shifts]: https://taskjuggler.org/tj3/manual/shifts.resource.html
+[weekstartsmonday]: https://taskjuggler.org/tj3/manual/weekstartsmonday.html
+[timingresolution]: https://taskjuggler.org/tj3/manual/timingresolution.html

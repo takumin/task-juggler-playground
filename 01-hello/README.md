@@ -4,16 +4,16 @@ TaskJuggler の最小構成。プロジェクトを宣言し、人を定義し�
 
 ## 学ぶ内容
 
-- `project` の宣言 — ID / 名前 / 開始日 / 期間 (`+2m` のような相対指定)
-- `timezone` / `timeformat` / `now` の設定
-- `resource` と `task` の宣言
+- [`project`][project] の宣言 — ID / 名前 / 開始日 / 期間 (`+2m` のような相対指定)
+- [`timezone`][timezone] / [`timeformat`][timeformat] / [`now`][now] の設定
+- [`resource`][resource] と [`task`][task] の宣言
 - 期間の3つの指定方法の違い
-  - **effort** — 人的工数。担当者が割り当たって初めて期間が決まる
-  - **duration** — 暦時間ベース。担当者に依存しない
-  - **length** — 稼働日ベース。休日は数えないが担当者の負荷には依存しない
-- `allocate` による担当割当
-- `depends` による直列化 (`!` は兄弟タスクを指す)
-- `taskreport` による HTML 出力
+  - **[effort][effort]** — 人的工数。担当者が割り当たって初めて期間が決まる
+  - **[duration][duration]** — 暦時間ベース。担当者に依存しない
+  - **[length][length]** — 稼働日ベース。休日は数えないが担当者の負荷には依存しない
+- [`allocate`][allocate] による担当割当
+- [`depends`][depends] による直列化 (`!` は兄弟タスクを指す)
+- [`taskreport`][taskreport] による HTML 出力
 
 ## 実行結果
 
@@ -43,3 +43,18 @@ tjp を書いて `tj3` に通し、結果を確認するというサイクルが
 ---
 
 ← [README (全体)](../README.md) | 次 → [02. 構造](../02-structure/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[project]: https://taskjuggler.org/tj3/manual/project.html
+[timezone]: https://taskjuggler.org/tj3/manual/timezone.html
+[timeformat]: https://taskjuggler.org/tj3/manual/timeformat.html
+[now]: https://taskjuggler.org/tj3/manual/now.html
+[resource]: https://taskjuggler.org/tj3/manual/resource.html
+[task]: https://taskjuggler.org/tj3/manual/task.html
+[effort]: https://taskjuggler.org/tj3/manual/effort.html
+[duration]: https://taskjuggler.org/tj3/manual/duration.html
+[length]: https://taskjuggler.org/tj3/manual/length.html
+[allocate]: https://taskjuggler.org/tj3/manual/allocate.html
+[depends]: https://taskjuggler.org/tj3/manual/depends.html
+[taskreport]: https://taskjuggler.org/tj3/manual/taskreport.html

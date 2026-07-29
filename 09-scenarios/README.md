@@ -5,9 +5,9 @@
 
 ## 学ぶ内容
 
-- `scenario` の入れ子定義と継承
-- シナリオ固有の属性上書き (`crash:allocate` のような書き方)
-- レポートの `scenarios` による横並び比較
+- [`scenario`][scenario] の入れ子定義と継承
+- シナリオ固有の属性上書き ([`crash:allocate`][allocate] のような書き方)
+- レポートの [`scenarios`][scenarios] による横並び比較
 
 ## シナリオの定義
 
@@ -73,3 +73,9 @@ task impl "実装" {
 ---
 
 ← [08. フィルタ](../08-filters/README.md) | [README (全体)](../README.md) | 次 → [10. コスト](../10-cost/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[scenario]: https://taskjuggler.org/tj3/manual/scenario.html
+[allocate]: https://taskjuggler.org/tj3/manual/allocate.html
+[scenarios]: https://taskjuggler.org/tj3/manual/scenarios.html

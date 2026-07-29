@@ -18,14 +18,14 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 
 ## 学ぶ内容
 
-- レポート種別 — `taskreport` / `resourcereport` / `textreport` / `accountreport` /
-  `tracereport` / `export` / `icalreport` / `nikureport`
-- `columns` と列のカスタマイズ — `title` / `cellcolor` / `celltext` / `scale` / `width`
-- `formats` — html / csv の同時出力
-- 表示範囲 — `period` / `loadunit` / `scenarios`
-- 折りたたみ — `rolluptask` / `rollupresource` / `opennodes`
-- 並び替え — `sorttasks` / `sortresources`
-- 合成 — `textreport` と `navigator`
+- レポート種別 — [`taskreport`][taskreport] / [`resourcereport`][resourcereport] / [`textreport`][textreport] / [`accountreport`][accountreport] /
+  [`tracereport`][tracereport] / [`export`][export] / [`icalreport`][icalreport] / [`nikureport`][nikureport]
+- [`columns`][columns] と列のカスタマイズ — [`title`][title] / [`cellcolor`][cellcolor] / [`celltext`][celltext] / [`scale`][scale] / [`width`][width]
+- [`formats`][formats] — html / csv の同時出力
+- 表示範囲 — [`period`][period] / [`loadunit`][loadunit] / [`scenarios`][scenarios]
+- 折りたたみ — [`rolluptask`][rolluptask] / [`rollupresource`][rollupresource] / [`opennodes`][opennodes]
+- 並び替え — [`sorttasks`][sorttasks] / [`sortresources`][sortresources]
+- 合成 — [`textreport`][textreport] と [`navigator`][navigator]
 
 ## CSV 出力の例
 
@@ -74,3 +74,30 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 ---
 
 ← [06. 進捗と実績](../06-progress/README.md) | [README (全体)](../README.md) | 次 → [08. フィルタ](../08-filters/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[taskreport]: https://taskjuggler.org/tj3/manual/taskreport.html
+[resourcereport]: https://taskjuggler.org/tj3/manual/resourcereport.html
+[textreport]: https://taskjuggler.org/tj3/manual/textreport.html
+[accountreport]: https://taskjuggler.org/tj3/manual/accountreport.html
+[tracereport]: https://taskjuggler.org/tj3/manual/tracereport.html
+[export]: https://taskjuggler.org/tj3/manual/export.html
+[icalreport]: https://taskjuggler.org/tj3/manual/icalreport.html
+[nikureport]: https://taskjuggler.org/tj3/manual/nikureport.html
+[columns]: https://taskjuggler.org/tj3/manual/columns.html
+[title]: https://taskjuggler.org/tj3/manual/title.column.html
+[cellcolor]: https://taskjuggler.org/tj3/manual/cellcolor.column.html
+[celltext]: https://taskjuggler.org/tj3/manual/celltext.column.html
+[scale]: https://taskjuggler.org/tj3/manual/scale.column.html
+[width]: https://taskjuggler.org/tj3/manual/width.column.html
+[formats]: https://taskjuggler.org/tj3/manual/formats.html
+[period]: https://taskjuggler.org/tj3/manual/period.report.html
+[loadunit]: https://taskjuggler.org/tj3/manual/loadunit.html
+[scenarios]: https://taskjuggler.org/tj3/manual/scenarios.html
+[rolluptask]: https://taskjuggler.org/tj3/manual/rolluptask.html
+[rollupresource]: https://taskjuggler.org/tj3/manual/rollupresource.html
+[opennodes]: https://taskjuggler.org/tj3/manual/opennodes.html
+[sorttasks]: https://taskjuggler.org/tj3/manual/sorttasks.html
+[sortresources]: https://taskjuggler.org/tj3/manual/sortresources.html
+[navigator]: https://taskjuggler.org/tj3/manual/navigator.html

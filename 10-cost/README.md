@@ -5,13 +5,13 @@
 
 ## 学ぶ内容
 
-- `account` — 勘定科目の定義 (入れ子可)
-- `aggregate` — その科目が何に由来する金額を集めるか
-- `rate` — リソースの日額単価
-- `chargeset` — どの科目に付けるか (按分も可能)
-- `charge` — 一時費用・継続費用
-- `balance` — 収支分析の対象指定
-- `currency` / `currencyformat`
+- [`account`][account] — 勘定科目の定義 (入れ子可)
+- [`aggregate`][aggregate] — その科目が何に由来する金額を集めるか
+- [`rate`][rate] — リソースの日額単価
+- [`chargeset`][chargeset] — どの科目に付けるか (按分も可能)
+- [`charge`][charge] — 一時費用・継続費用
+- [`balance`][balance] — 収支分析の対象指定
+- [`currency`][currency] / [`currencyformat`][currencyformat]
 
 ## 実行結果
 
@@ -85,3 +85,14 @@
 ---
 
 ← [09. シナリオ](../09-scenarios/README.md) | [README (全体)](../README.md) | 次 → [11. モジュール化](../11-modular/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[account]: https://taskjuggler.org/tj3/manual/account.html
+[aggregate]: https://taskjuggler.org/tj3/manual/aggregate.html
+[rate]: https://taskjuggler.org/tj3/manual/rate.resource.html
+[chargeset]: https://taskjuggler.org/tj3/manual/chargeset.html
+[charge]: https://taskjuggler.org/tj3/manual/charge.html
+[balance]: https://taskjuggler.org/tj3/manual/balance.html
+[currency]: https://taskjuggler.org/tj3/manual/currency.html
+[currencyformat]: https://taskjuggler.org/tj3/manual/currencyformat.html

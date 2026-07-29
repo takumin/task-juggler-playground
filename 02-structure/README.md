@@ -12,12 +12,12 @@
 
 ## 学ぶ内容
 
-- `task` の入れ子による**コンテナタスク**
+- [`task`][task] の入れ子による**コンテナタスク**
 - 依存関係の3つの参照記法
-- コンテナに `depends` したときの意味
-- `milestone` (期間ゼロの時点)
-- `gapduration` と `gaplength` による依存の間隔
-- `resourcereport` でリソース視点に切り替える
+- コンテナに [`depends`][depends] したときの意味
+- [`milestone`][milestone] (期間ゼロの時点)
+- [`gapduration`][gapduration] と [`gaplength`][gaplength] による依存の間隔
+- [`resourcereport`][resourcereport] でリソース視点に切り替える
 
 ## 依存の参照記法
 
@@ -74,3 +74,12 @@
 ---
 
 ← [01. 基礎](../01-hello/README.md) | [README (全体)](../README.md) | 次 → [03. リソース](../03-resources/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[task]: https://taskjuggler.org/tj3/manual/task.html
+[depends]: https://taskjuggler.org/tj3/manual/depends.html
+[milestone]: https://taskjuggler.org/tj3/manual/milestone.html
+[gapduration]: https://taskjuggler.org/tj3/manual/gapduration.html
+[gaplength]: https://taskjuggler.org/tj3/manual/gaplength.html
+[resourcereport]: https://taskjuggler.org/tj3/manual/resourcereport.html

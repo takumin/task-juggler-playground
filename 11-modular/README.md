@@ -18,10 +18,10 @@
 
 ## 学ぶ内容
 
-- `include` — ファイルの取り込みと `taskprefix`
-- `macro` — 定型記述の再利用
-- `supplement` — 既に定義済みのタスク/リソースへの後付け
-- `extend` — ユーザー定義属性
+- [`include`][include] — ファイルの取り込みと [`taskprefix`][taskprefix]
+- [`macro`][macro] — 定型記述の再利用
+- [`supplement`][supplement] — 既に定義済みのタスク/リソースへの後付け
+- [`extend`][extend] — ユーザー定義属性
 
 ## マクロ
 
@@ -98,3 +98,11 @@ supplement task design {
 ---
 
 ← [10. コスト](../10-cost/README.md) | [README (全体)](../README.md) | 次 → [12. 運用](../12-operations/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[include]: https://taskjuggler.org/tj3/manual/include.properties.html
+[taskprefix]: https://taskjuggler.org/tj3/manual/taskprefix.html
+[macro]: https://taskjuggler.org/tj3/manual/macro.html
+[supplement]: https://taskjuggler.org/tj3/manual/supplement.html
+[extend]: https://taskjuggler.org/tj3/manual/extend.html

@@ -14,12 +14,12 @@
 
 ## 学ぶ内容
 
-- `journalentry` — 状況の記録
-- `alert` — 警告レベル (green / yellow / red)
-- `journalmode` — どの記録をレポートに集めるか
-- `textreport` — 報告書としての組版
-- `timesheetreport` — タイムシートのひな形生成
-- `timesheet` / `statussheet` — メンバーからの報告フォーマット
+- [`journalentry`][journalentry] — 状況の記録
+- [`alert`][alert] — 警告レベル (green / yellow / red)
+- [`journalmode`][journalmode] — どの記録をレポートに集めるか
+- [`textreport`][textreport] — 報告書としての組版
+- [`timesheetreport`][timesheetreport] — タイムシートのひな形生成
+- [`timesheet`][timesheet] / [`statussheet`][statussheet] — メンバーからの報告フォーマット
 
 ## journalentry
 
@@ -108,3 +108,13 @@ timesheet alice 2026-08-17-00:00-+0900 - 2026-08-24-00:00-+0900 {
 ---
 
 ← [11. モジュール化](../11-modular/README.md) | [README (全体)](../README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[journalentry]: https://taskjuggler.org/tj3/manual/journalentry.html
+[alert]: https://taskjuggler.org/tj3/manual/alert.html
+[journalmode]: https://taskjuggler.org/tj3/manual/journalmode.html
+[textreport]: https://taskjuggler.org/tj3/manual/textreport.html
+[timesheetreport]: https://taskjuggler.org/tj3/manual/timesheetreport.html
+[timesheet]: https://taskjuggler.org/tj3/manual/timesheet.html
+[statussheet]: https://taskjuggler.org/tj3/manual/statussheet.html

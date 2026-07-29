@@ -8,11 +8,11 @@
 
 ## 学ぶ内容
 
-- `trackingscenario` — 実績を記録するシナリオの指定
-- `booking` — 実際に作業した時間の記録
-- `sloppy` — booking の衝突チェックの緩さ
-- `complete` — 進捗率の手入力
-- `now` の位置とスケジュール結果の関係
+- [`trackingscenario`][trackingscenario] — 実績を記録するシナリオの指定
+- [`booking`][booking] — 実際に作業した時間の記録
+- [`sloppy`][sloppy] — booking の衝突チェックの緩さ
+- [`complete`][complete] — 進捗率の手入力
+- [`now`][now] の位置とスケジュール結果の関係
 
 ## 実行結果
 
@@ -71,3 +71,11 @@
 ---
 
 ← [05. 制約](../05-constraints/README.md) | [README (全体)](../README.md) | 次 → [07. レポート](../07-reports/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[trackingscenario]: https://taskjuggler.org/tj3/manual/trackingscenario.html
+[booking]: https://taskjuggler.org/tj3/manual/booking.task.html
+[sloppy]: https://taskjuggler.org/tj3/manual/sloppy.booking.html
+[complete]: https://taskjuggler.org/tj3/manual/complete.html
+[now]: https://taskjuggler.org/tj3/manual/now.html

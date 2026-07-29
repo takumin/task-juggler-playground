@@ -37,9 +37,9 @@
 
 | 引数 | 関数 |
 |---|---|
-| なし | `isleaf()` `treelevel()` `istask()` `isresource()` |
-| シナリオ ID | `ismilestone(plan)` `isactive(plan)` `isongoing(plan)` |
-| その他 | `ischildof(ID)` `isdutyof(ID, シナリオ)` `isdependencyof(ID, シナリオ, 距離)` |
+| なし | [`isleaf()`][isleaf] [`treelevel()`][treelevel] [`istask()`][istask] [`isresource()`][isresource] |
+| シナリオ ID | [`ismilestone(plan)`][ismilestone] [`isactive(plan)`][isactive] [`isongoing(plan)`][isongoing] |
+| その他 | [`ischildof(ID)`][ischildof] [`isdutyof(ID, シナリオ)`][isdutyof] [`isdependencyof(ID, シナリオ, 距離)`][isdependencyof] |
 
 ## `_` サフィックス (スコープ側で評価)
 
@@ -87,3 +87,16 @@ hideresource ~(isleaf() & isleaf_())
 ---
 
 ← [07. レポート](../07-reports/README.md) | [README (全体)](../README.md) | 次 → [09. シナリオ](../09-scenarios/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[isleaf]: https://taskjuggler.org/tj3/manual/isleaf.html
+[treelevel]: https://taskjuggler.org/tj3/manual/treelevel.html
+[istask]: https://taskjuggler.org/tj3/manual/istask.html
+[isresource]: https://taskjuggler.org/tj3/manual/isresource.html
+[ismilestone]: https://taskjuggler.org/tj3/manual/ismilestone.html
+[isactive]: https://taskjuggler.org/tj3/manual/isactive.html
+[isongoing]: https://taskjuggler.org/tj3/manual/isongoing.html
+[ischildof]: https://taskjuggler.org/tj3/manual/ischildof.html
+[isdutyof]: https://taskjuggler.org/tj3/manual/isdutyof.html
+[isdependencyof]: https://taskjuggler.org/tj3/manual/isdependencyof.html

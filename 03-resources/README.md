@@ -7,12 +7,12 @@
 
 ## 学ぶ内容
 
-- `resource` の入れ子によるチーム階層、`managers`
-- 複数リソースの `allocate` — 並行投入で期間が縮む
-- 割当の選択制御 — `alternative` / `select` / `persistent` / `mandatory`
-- `efficiency` — 生産性の係数。チームや設備のモデル化にも使う
-- `limits` — 1日/1週/1月あたりの上限
-- `purge` — 継承した属性のリセット
+- [`resource`][resource] の入れ子によるチーム階層、[`managers`][managers]
+- 複数リソースの [`allocate`][allocate] — 並行投入で期間が縮む
+- 割当の選択制御 — [`alternative`][alternative] / [`select`][select] / [`persistent`][persistent] / [`mandatory`][mandatory]
+- [`efficiency`][efficiency] — 生産性の係数。チームや設備のモデル化にも使う
+- [`limits`][limits] — 1日/1週/1月あたりの上限
+- [`purge`][purge] — 継承した属性のリセット
 
 ## 実行結果
 
@@ -63,3 +63,16 @@
 ---
 
 ← [02. 構造](../02-structure/README.md) | [README (全体)](../README.md) | 次 → [04. カレンダー](../04-calendar/README.md)
+
+<!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
+
+[resource]: https://taskjuggler.org/tj3/manual/resource.html
+[managers]: https://taskjuggler.org/tj3/manual/managers.html
+[allocate]: https://taskjuggler.org/tj3/manual/allocate.html
+[alternative]: https://taskjuggler.org/tj3/manual/alternative.html
+[select]: https://taskjuggler.org/tj3/manual/select.html
+[persistent]: https://taskjuggler.org/tj3/manual/persistent.html
+[mandatory]: https://taskjuggler.org/tj3/manual/mandatory.html
+[efficiency]: https://taskjuggler.org/tj3/manual/efficiency.html
+[limits]: https://taskjuggler.org/tj3/manual/limits.resource.html
+[purge]: https://taskjuggler.org/tj3/manual/purge.html
