@@ -55,7 +55,7 @@ ruby tools/dump-report.rb <生成された html>
 `main` への push で `.github/workflows/pages.yml` が全段階を並列ビルドし、
 README・レポート・tjp ソースを 1 ページにまとめて公開する。
 生成は `tools/build-site.rb` (`stages` / `entrypoint` / `stage` / `index` の 4 サブコマンド)。
-組み立て手順は README の「サイトの生成」にある。
+組み立て手順は `DEVELOPMENT.md` の「サイトの生成」にある。
 
 - 公開先は <https://takumi.tmfam.com/task-juggler-playground/>
   (アカウントのカスタムドメイン設定により `github.io` ではない)
@@ -101,3 +101,7 @@ bundle exec tj3man task           # task の属性 ([sc] = シナリオ固有)
 - 出力先は必ず `-o <段階ディレクトリ>/out`。リポジトリルートを汚さない
 - 新しい事実が分かったら、該当段階の README とルート README の
   「ハマりどころ」に反映する
+- ルート README は **Pages の読者向け** (教材・ハマりどころのみ)。
+  セットアップ・実行手順・ディレクトリ構成・生成物の扱い・サイトの生成といった
+  リポジトリを触る人向けの記述は `DEVELOPMENT.md` に書く。
+  `DEVELOPMENT.md` はサイトに載らないので、README から張るリンクは絶対 URL にする

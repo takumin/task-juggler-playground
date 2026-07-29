@@ -2,61 +2,20 @@
 
 TaskJuggler 3.8.4 を段階的に学ぶためのサンプル集。
 
-各段階に**実際に動く `.tjp`** と、その段階の解説 README を置いてある。
+各段階に**実際に動く `.tjp`** と、その段階の解説を置いてある。
 条件だけを変えた比較になるよう作ってあるので、読むだけでなく数値の差で確認できる。
 
-**解説・生成されたレポート・tjp のソースをまとめたサイトを公開している。**
-手元に環境を作らずブラウザだけで読み進めたいならこちら:
-<https://takumi.tmfam.com/task-juggler-playground/>
+各段階のページには、解説・`tj3` が生成したレポート・tjp のソースがまとまっている。
+環境を用意しなくてもブラウザだけで読み進められる。
 
-## セットアップ
-
-```sh
-bundle install
-```
-
-taskjuggler gem は `vendor/bundle` に入り、システムを汚さない。
-インストール先は `.bundle/config` をリポジトリに含めて固定してあるので、
-clone 後は `bundle install` だけでよい。
-
-Ruby 3.4 以降で標準添付から外れた `base64` / `drb` を Gemfile で明示している。
-
-## 実行方法
-
-```sh
-bundle exec tj3 -o <出力先ディレクトリ> <tjpファイル>
-
-# 例
-bundle exec tj3 -o 01-hello/out 01-hello/hello.tjp
-```
-
-**コマンドはこのディレクトリ (リポジトリルート) から実行する。**
-レポートの出力先はカレントディレクトリ基準になるため `-o` で明示するのが確実。
-
-生成された HTML はブラウザで開く。表の内容だけを手早く確認したいときは:
-
-```sh
-ruby tools/dump-report.rb 01-hello/out/overview.html
-```
-
-<details markdown="1">
-<summary>全段階をまとめて実行する</summary>
-
-```sh
-for f in 01-hello/hello.tjp 02-structure/structure.tjp 03-resources/resources.tjp \
-         04-calendar/calendar.tjp 05-constraints/constraints.tjp 06-progress/progress.tjp \
-         07-reports/reports.tjp 08-filters/filters.tjp 09-scenarios/scenarios.tjp \
-         10-cost/cost.tjp 11-modular/main.tjp 12-operations/operations.tjp; do
-  mkdir -p "$(dirname "$f")/out"
-  bundle exec tj3 -o "$(dirname "$f")/out" "$f"
-done
-```
-
-</details>
+- 公開サイト: <https://takumi.tmfam.com/task-juggler-playground/>
+- リポジトリ: <https://github.com/takumin/task-juggler-playground>
+- 手元で動かす手順・サイトの組み立て方:
+  [DEVELOPMENT.md](https://github.com/takumin/task-juggler-playground/blob/main/DEVELOPMENT.md)
 
 ## 学習ロードマップ
 
-各段階のディレクトリに詳しい README がある。番号順に進めるのが前提。
+各段階に詳しい解説がある。番号順に進めるのが前提。
 
 | # | 段階 | 概要 |
 |---|---|---|
@@ -92,19 +51,18 @@ done
 
 ## リファレンスの引き方
 
-```sh
-bundle exec tj3man <キーワード>      # 個別のキーワード
-bundle exec tj3man                   # 全キーワード一覧 (266 個)
-bundle exec tj3man columnid          # レポートで使える列の一覧
-bundle exec tj3man task              # task の属性一覧 ([sc] = シナリオ固有)
-```
+構文は推測せずに必ず引く。公式マニュアルがそのまま 3.8.4 のリファレンスになっている。
 
-各段階の README に「この段階で扱うキーワード」を挙げてあるので、そこから引くのが早い。
+- [TaskJuggler User Manual](https://taskjuggler.org/tj3/manual/index.html) — 全 266 キーワード
+- [columnid](https://taskjuggler.org/tj3/manual/columnid.html) — レポートで使える列の一覧
+- [task](https://taskjuggler.org/tj3/manual/task.html) — task の属性一覧 (`[sc]` = シナリオ固有)
+
+各段階に「この段階で扱うキーワード」を挙げてあるので、そこから引くのが早い。
 冒頭に **Warning** が出るキーワードは非推奨か未テスト。
 
 ## 横断的なハマりどころ
 
-段階固有の注意点は各 README に書いてある。ここでは複数段階にまたがるものだけ。
+段階固有の注意点は各段階の解説に書いてある。ここでは複数段階にまたがるものだけ。
 
 ### 日付とタイムゾーン
 
@@ -142,59 +100,3 @@ bundle exec tj3man task              # task の属性一覧 ([sc] = シナリオ
 - 非推奨: `shift.resource` (→ `shifts`)、`projection` (booking があれば自動)、`vacation` (→ `leaves`)
 - 未テスト警告つき: `effortdone` / `effortleft`、`leaveallowance`、`accountreport`、
   `formats.export`、`alertlevels`
-
-## ディレクトリ構成
-
-```
-.
-├── Gemfile / Gemfile.lock   taskjuggler 3.8.4 + base64 / drb / kramdown
-├── tools/
-│   ├── dump-report.rb       生成 HTML から表だけを抜き出す確認用スクリプト
-│   ├── build-site.rb        GitHub Pages 用サイトの生成
-│   └── site.css             同上のスタイル
-├── .github/workflows/
-│   └── pages.yml            12 段階を並列ビルドして Pages に配置する
-├── NN-<name>/
-│   ├── *.tjp                教材本体 (解説はコメントとして記述)
-│   ├── README.md            その段階の解説
-│   ├── CLAUDE.md            Claude Code 用のコンテキスト
-│   └── out/                 生成物 (消してよい)
-└── README.md
-```
-
-各ディレクトリで Claude Code を起動すると、その段階に特化した `CLAUDE.md` が読み込まれる。
-
-## サイトの生成
-
-`main` に push すると GitHub Actions が全段階を並列に `tj3` にかけ、
-README・レポート・tjp ソースを 1 ページにまとめたサイトを Pages に配置する。
-
-手元で同じものを組み立てて確認するには:
-
-```sh
-bundle exec ruby tools/build-site.rb index --output site
-
-for s in $(bundle exec ruby tools/build-site.rb stages | tr -d '[]"' | tr ',' ' '); do
-  mkdir -p "$s/out"   # tj3 は -o のディレクトリを自分では作らない
-  bundle exec tj3 -o "$s/out" "$(bundle exec ruby tools/build-site.rb entrypoint "$s")"
-  bundle exec ruby tools/build-site.rb stage "$s" --output site
-done
-
-python3 -m http.server 8000 --directory site
-```
-
-`site/` は生成物なので追跡していない。段階ディレクトリを増やしても
-`stages` が拾うため、ワークフローの変更は要らない。
-
-Pages の有効化だけはワークフローからはできない
-(`GITHUB_TOKEN` に権限が無く `configure-pages` の `enablement` は失敗する)。
-リポジトリごとに 1 度だけ、Settings → Pages → Source を **GitHub Actions** にするか、
-以下を実行しておく。
-
-```sh
-gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
-```
-
-サイトの Markdown 変換には kramdown の GFM パーサを使っている。
-`<details>` の中に書いた Markdown を変換させるには
-`<details markdown="1">` と書く (GitHub 側の表示には影響しない)。
