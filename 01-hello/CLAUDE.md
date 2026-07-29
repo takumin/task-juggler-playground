@@ -46,7 +46,18 @@ ruby tools/dump-report.rb 01-hello/out/overview.html
 - レポートの出力先は**カレントディレクトリ基準**。tjp の場所ではない。
   `-o` を省くと実行した場所に `css/` `icons/` ごと散らかる
 - `taskreport` の第2引数は**拡張子なしのファイル名**。拡張子は `formats` から自動で付く
-- `effort` を指定したタスクは `allocate` がないとスケジュールされない
+- `effort` を指定したタスクに `allocate` が無いと**エラーで停止する**
+  (`Task x has an effort but no resource allocations.`)
+- `duration` / `length` に `allocate` を足しても期間は変わらない。
+  変わるのは工数だけ (実測: `duration 10d` + 1人 = 8.0、`length 10d` + 1人 = 10.0)
+
+## 教材の構成意図
+
+`design` → `impl` → `review` の3本が依存チェーンの例。
+`cmp_` で始まる3本は**同じ 10d を effort / duration / length で指定しただけの比較**で、
+依存を張らず専用リソース (carol) を使うことで、指定方法以外の条件を揃えてある。
+実験でこの性質を壊すとき (比較タスクに依存を足す、carol を他タスクにも割り当てる等) は
+その旨を伝える。
 
 ## 作業方針
 

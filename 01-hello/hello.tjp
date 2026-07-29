@@ -15,6 +15,8 @@ project hello "Hello TaskJuggler" 2026-08-03 +2m {
 // リソース (人・設備)
 resource alice "Alice"
 resource bob   "Bob"
+// 下の比較タスク専用。design / impl とリソースを取り合わせないために分けてある
+resource carol "Carol"
 
 // タスク
 task design "設計" {
@@ -34,6 +36,30 @@ task review "レビュー" {
   depends !impl
   // duration = 担当者に関係なく経過時間で決まる期間 (暦日)
   duration 3d
+}
+
+/*
+ * 期間指定の3通りを、同じ 10d で比べる。
+ *
+ * depends を張っていないので3本とも 08-03 (月) から並列に走る。
+ * 違いは「10d を何として解釈するか」だけ。
+ */
+
+task cmp_effort "比較: effort 10d" {
+  // 工数。担当の空き時間から期間が決まる → 10 営業日ぶん
+  effort 10d
+  allocate carol
+}
+
+task cmp_duration "比較: duration 10d" {
+  // 暦時間。8/8・8/9 の土日も消費するので、上より1日早く終わる
+  duration 10d
+}
+
+task cmp_length "比較: length 10d" {
+  // 稼働日。土日を数えないので effort と同じ終わり方になる。
+  // 差が出るのは担当を増やしたとき (effort だけ縮む)
+  length 10d
 }
 
 // レポート定義: 出力ファイル名 (拡張子は formats が付ける)
