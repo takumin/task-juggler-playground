@@ -175,6 +175,7 @@ README・レポート・tjp ソースを 1 ページにまとめたサイトを 
 bundle exec ruby tools/build-site.rb index --output site
 
 for s in $(bundle exec ruby tools/build-site.rb stages | tr -d '[]"' | tr ',' ' '); do
+  mkdir -p "$s/out"   # tj3 は -o のディレクトリを自分では作らない
   bundle exec tj3 -o "$s/out" "$(bundle exec ruby tools/build-site.rb entrypoint "$s")"
   bundle exec ruby tools/build-site.rb stage "$s" --output site
 done

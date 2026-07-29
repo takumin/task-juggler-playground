@@ -47,10 +47,12 @@ jobs:
           bundler-cache: true
 
       # tj3 はレポートの出力先をカレントディレクトリ基準で解決するため
-      # 必ずリポジトリルートから実行する
+      # 必ずリポジトリルートから実行する。
+      # -o のディレクトリは自分では作らないので、先に用意しておく
       - name: tj3 を実行
         run: |
           entry=$(bundle exec ruby tools/build-site.rb entrypoint "${{ matrix.stage }}")
+          mkdir -p "${{ matrix.stage }}/out"
           bundle exec tj3 -o "${{ matrix.stage }}/out" "$entry"
 
       - name: 段階ページを生成
