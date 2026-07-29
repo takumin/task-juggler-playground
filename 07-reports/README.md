@@ -18,14 +18,16 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 
 ## 学ぶ内容
 
-- レポート種別 — [`taskreport`][taskreport] / [`resourcereport`][resourcereport] / [`textreport`][textreport] / [`accountreport`][accountreport] /
-  [`tracereport`][tracereport] / [`export`][export] / [`icalreport`][icalreport] / [`nikureport`][nikureport]
-- [`columns`][columns] と列のカスタマイズ — [`title`][title] / [`cellcolor`][cellcolor] / [`celltext`][celltext] / [`scale`][scale] / [`width`][width]
+- [`taskreport`][taskreport] / [`resourcereport`][resourcereport] — タスク視点とリソース視点の表・ガント
+- [`textreport`][textreport] / [`navigator`][navigator] — 他のレポートを埋め込んだページの合成
+- [`export`][export] — スケジュール結果を tjp として書き出す。他ツール向けには
+  [`tracereport`][tracereport] / [`icalreport`][icalreport] / [`nikureport`][nikureport] もある (この教材では未使用)
+- [`columns`][columns] — レポートに出す列の選択
+- [`title`][title] / [`cellcolor`][cellcolor] / [`celltext`][celltext] — 列のカスタマイズ
 - [`formats`][formats] — html / csv の同時出力
-- 表示範囲 — [`period`][period] / [`loadunit`][loadunit] / [`scenarios`][scenarios]
-- 折りたたみ — [`rolluptask`][rolluptask] / [`rollupresource`][rollupresource] / [`opennodes`][opennodes]
-- 並び替え — [`sorttasks`][sorttasks] / [`sortresources`][sortresources]
-- 合成 — [`textreport`][textreport] と [`navigator`][navigator]
+- [`period`][period] / [`loadunit`][loadunit] — 表示範囲と単位
+- [`rolluptask`][rolluptask] — 階層の折りたたみ
+- [`sorttasks`][sorttasks] — 並び替え
 
 ## CSV 出力の例
 
@@ -51,17 +53,13 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 <[navigator id="nav"]> ナビゲーションバーの埋め込み
 ```
 
-## 学習のポイント
+## ハマりどころ
 
 1. `celltext` / `cellcolor` は「条件に合うセルだけ」を書き換える。
    全セルに適用したいなら `@all` を使う
-2. 論理式の中では属性を `plan.effort` のように**シナリオ ID 付き**で参照する
-3. 埋め込み元のレポートも `formats` を指定していれば単体ファイルとしても生成される。
+2. 埋め込み元のレポートも `formats` を指定していれば単体ファイルとしても生成される。
    埋め込み専用にしたいなら `formats` を書かない
-4. **`export` は `outputdir` が効かない**。他のレポートが `outputdir` に従っても
-   `export` だけは無視するので、出力先を揃えたいならレポート名側にパスを書く。
-   拡張子は自動で付く (project ヘッダを含むなら `.tjp`、断片なら `.tji`)
-5. `accountreport` と `formats.export` は「未テスト」警告つきの機能
+3. `export` に指定する `formats` (`formats.export`) は「未テスト」警告つきの機能
 
 ## 得られるもの
 
@@ -80,7 +78,6 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 [taskreport]: https://taskjuggler.org/tj3/manual/taskreport.html
 [resourcereport]: https://taskjuggler.org/tj3/manual/resourcereport.html
 [textreport]: https://taskjuggler.org/tj3/manual/textreport.html
-[accountreport]: https://taskjuggler.org/tj3/manual/accountreport.html
 [tracereport]: https://taskjuggler.org/tj3/manual/tracereport.html
 [export]: https://taskjuggler.org/tj3/manual/export.html
 [icalreport]: https://taskjuggler.org/tj3/manual/icalreport.html
@@ -89,15 +86,9 @@ TaskJuggler の出力はすべてここに集約される。同じプロジェ�
 [title]: https://taskjuggler.org/tj3/manual/title.column.html
 [cellcolor]: https://taskjuggler.org/tj3/manual/cellcolor.column.html
 [celltext]: https://taskjuggler.org/tj3/manual/celltext.column.html
-[scale]: https://taskjuggler.org/tj3/manual/scale.column.html
-[width]: https://taskjuggler.org/tj3/manual/width.column.html
 [formats]: https://taskjuggler.org/tj3/manual/formats.html
 [period]: https://taskjuggler.org/tj3/manual/period.report.html
 [loadunit]: https://taskjuggler.org/tj3/manual/loadunit.html
-[scenarios]: https://taskjuggler.org/tj3/manual/scenarios.html
 [rolluptask]: https://taskjuggler.org/tj3/manual/rolluptask.html
-[rollupresource]: https://taskjuggler.org/tj3/manual/rollupresource.html
-[opennodes]: https://taskjuggler.org/tj3/manual/opennodes.html
 [sorttasks]: https://taskjuggler.org/tj3/manual/sorttasks.html
-[sortresources]: https://taskjuggler.org/tj3/manual/sortresources.html
 [navigator]: https://taskjuggler.org/tj3/manual/navigator.html

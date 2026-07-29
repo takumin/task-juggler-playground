@@ -20,6 +20,15 @@
 | `09-predecessors.html` | `~isdependencyof(phase2.gate2, plan, 0)` — 依存の連鎖 |
 | `10-nested.html` | `~(isleaf() & isleaf_())` — スコープ側で評価 |
 
+## 学ぶ内容
+
+- [`logicalexpression`][logicalexpression] — `~` / `&` / `|` と属性の比較
+- [`hidetask`][hidetask] / [`hideresource`][hideresource] — 論理式でレポートの行を絞る
+- [`isleaf`][isleaf] / [`treelevel`][treelevel] / [`istask`][istask] / [`isresource`][isresource] — 引数を取らない関数
+- [`ismilestone`][ismilestone] / [`isactive`][isactive] / [`isongoing`][isongoing] — シナリオ ID を取る関数
+- [`ischildof`][ischildof] / [`isdutyof`][isdutyof] / [`isdependencyof`][isdependencyof] — タスク ID を取る関数
+- [`functions`][functions] — 関数名末尾の `_` によるスコープ側での評価
+
 ## 論理式の基本
 
 ```
@@ -56,20 +65,6 @@ hideresource ~(isleaf() & isleaf_())
 
 結果として「葉リソースを、葉タスクの下にだけ表示する」という意味になる。
 
-## 学習のポイント
-
-1. **比較演算子は `&` `|` より結合が弱い**。
-   `a() | plan.id = "x"` は `(a() | plan.id) = "x"` と解釈されて
-   `First operand ... must be a date, a number or a string` エラーになる。
-   **比較は必ず括弧で囲む**
-2. **関数に渡すタスク ID はルートからのフルパス**。
-   ネストしたタスクを短く書いても一致せず、**エラーも出ないまま結果が空になる**。
-   結果が空のときは真っ先にここを疑う
-3. ツリーモード (既定) では、条件に合わなくても**親は表示される**。
-   ツリー構造を保つための仕様
-4. **`isdependencyof(X, ...)` は名前と逆**で、「X が依存している**先行**タスク」と
-   X 自身を返す。後続タスクではない
-
 ## isdependencyof の距離 (実測)
 
 起点を `phase2.gate2` (最後のマイルストーン) にした場合。
@@ -79,6 +74,19 @@ hideresource ~(isleaf() & isleaf_())
 | `1` | フェーズ2, リリース (直前まで) |
 | `2` | さらにフェーズ1配下と不具合対応まで |
 | `0` | 距離を問わず全ての先行タスク |
+
+## ハマりどころ
+
+1. 比較演算子は `&` `|` より**結合が弱い**ので、比較は必ず括弧で囲む。
+   `a() | plan.id = "x"` は `(a() | plan.id) = "x"` と解釈されて
+   `First operand ... must be a date, a number or a string` エラーになる
+2. 関数に渡すタスク ID は**ルートからのフルパス**。
+   ネストしたタスクを短く書いても一致せず、エラーも出ないまま結果が空になる。
+   結果が空のときは真っ先にここを疑う
+3. ツリーモード (既定) では、条件に合わなくても**親は表示される**。
+   ツリー構造を保つための仕様
+4. `isdependencyof(X, ...)` は**名前と逆**で、「X が依存している先行タスク」と
+   X 自身を返す。後続タスクではない
 
 ## 得られるもの
 
@@ -91,6 +99,10 @@ hideresource ~(isleaf() & isleaf_())
 
 <!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
 
+[logicalexpression]: https://taskjuggler.org/tj3/manual/logicalexpression.html
+[functions]: https://taskjuggler.org/tj3/manual/functions.html
+[hidetask]: https://taskjuggler.org/tj3/manual/hidetask.html
+[hideresource]: https://taskjuggler.org/tj3/manual/hideresource.html
 [isleaf]: https://taskjuggler.org/tj3/manual/isleaf.html
 [treelevel]: https://taskjuggler.org/tj3/manual/treelevel.html
 [istask]: https://taskjuggler.org/tj3/manual/istask.html

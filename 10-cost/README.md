@@ -11,7 +11,8 @@
 - [`chargeset`][chargeset] — どの科目に付けるか (按分も可能)
 - [`charge`][charge] — 一時費用・継続費用
 - [`balance`][balance] — 収支分析の対象指定
-- [`currency`][currency] / [`currencyformat`][currencyformat]
+- [`accountreport`][accountreport] — 科目ごとの集計表
+- [`currency`][currency] / [`currencyformat`][currencyformat] — 通貨と数値の書式
 
 ## 実行結果
 
@@ -63,9 +64,9 @@
 
 どの科目に付くかはタスクの `chargeset` で決まる。
 
-## 学習のポイント
+## ハマりどころ
 
-1. **`cost` / `revenue` 列を使うには `balance` の定義が必須**。
+1. `cost` / `revenue` 列を使うには **`balance` の定義が必須**。
    ないとセルが `No 'balance' defined!` になる
 2. 金額を計上できるのは**末端 (leaf) の科目だけ**
 3. `chargeset` で按分する科目は、**同じトップレベル科目の配下**でなければならない。
@@ -94,5 +95,6 @@
 [chargeset]: https://taskjuggler.org/tj3/manual/chargeset.html
 [charge]: https://taskjuggler.org/tj3/manual/charge.html
 [balance]: https://taskjuggler.org/tj3/manual/balance.html
+[accountreport]: https://taskjuggler.org/tj3/manual/accountreport.html
 [currency]: https://taskjuggler.org/tj3/manual/currency.html
 [currencyformat]: https://taskjuggler.org/tj3/manual/currencyformat.html

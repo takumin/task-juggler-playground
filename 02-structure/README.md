@@ -12,12 +12,11 @@
 
 ## 学ぶ内容
 
-- [`task`][task] の入れ子による**コンテナタスク**
-- 依存関係の3つの参照記法
-- コンテナに [`depends`][depends] したときの意味
-- [`milestone`][milestone] (期間ゼロの時点)
-- [`gapduration`][gapduration] と [`gaplength`][gaplength] による依存の間隔
-- [`resourcereport`][resourcereport] でリソース視点に切り替える
+- [`task`][task] — 入れ子によるコンテナタスク
+- [`depends`][depends] — 依存の宣言。`!` / `!!` / 絶対パスの3つの参照記法がある
+- [`milestone`][milestone] — 期間ゼロの時点
+- [`gapduration`][gapduration] / [`gaplength`][gaplength] — 依存に間隔を空ける
+- [`resourcereport`][resourcereport] — リソース視点への切り替え
 
 ## 依存の参照記法
 
@@ -57,11 +56,11 @@
 
 01 で見た `duration` と `length` の対比が、依存の間隔にもそのまま出てくる。
 
-## 学習のポイント
+## ハマりどころ
 
 1. `!` の数は「**何階層上を起点にするか**」であって「何個上の兄弟か」ではない。
    ここを取り違えると依存が意図しないタスクに張られる
-2. **コンテナタスクに `effort` は書けない**。期間も工数も子から決まる
+2. コンテナタスクに `effort` は**書けない**。期間も工数も子から決まる
 3. 依存先のタスクは**定義済みでなくてもよい** (前方参照できる) が、
    ID を間違えるとエラーになる。パスは常にツリー構造を意識して書く
 4. `milestone` は `task` の**属性**。`effort` / `duration` とは併用できない

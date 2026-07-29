@@ -7,10 +7,11 @@
 
 ## 学ぶ内容
 
-- [`resource`][resource] の入れ子によるチーム階層、[`managers`][managers]
-- 複数リソースの [`allocate`][allocate] — 並行投入で期間が縮む
-- 割当の選択制御 — [`alternative`][alternative] / [`select`][select] / [`persistent`][persistent] / [`mandatory`][mandatory]
-- [`efficiency`][efficiency] — 生産性の係数。チームや設備のモデル化にも使う
+- [`resource`][resource] — 入れ子によるチーム階層
+- [`managers`][managers] — 管理者の記録
+- [`allocate`][allocate] — 担当の割当。複数を並行投入すると期間が縮む
+- [`alternative`][alternative] / [`select`][select] / [`persistent`][persistent] / [`mandatory`][mandatory] — 割当の選択制御
+- [`efficiency`][efficiency] — 生産性の係数
 - [`limits`][limits] — 1日/1週/1月あたりの上限
 - [`purge`][purge] — 継承した属性のリセット
 
@@ -40,9 +41,9 @@
 `persistent` を付けると、いったん選んだ担当を最後まで固定する。
 付けないと空きに応じて途中で担当が入れ替わりうる。
 
-## 学習のポイント
+## ハマりどころ
 
-1. **`limits` を書く場所で意味が変わる**
+1. `limits` は**書く場所で意味が変わる**
    - `resource` の中 → そのリソースの全タスク合計に効く
    - `task` の中 → そのタスクの消費量に効く
    - `allocate` の中 → その割当だけに効く

@@ -18,9 +18,9 @@
 
 ## 学ぶ内容
 
-- [`include`][include] — ファイルの取り込みと [`taskprefix`][taskprefix]
+- [`include`][include] / [`taskprefix`][taskprefix] — ファイルの取り込みと配置先の指定
 - [`macro`][macro] — 定型記述の再利用
-- [`supplement`][supplement] — 既に定義済みのタスク/リソースへの後付け
+- [`supplement`][supplement] — 定義済みのタスク / リソースへの後付け
 - [`extend`][extend] — ユーザー定義属性
 
 ## マクロ
@@ -76,16 +76,16 @@ supplement task design {
 
 デプロイと経過観察は `subtasks.tji` から `taskprefix phase2` で流し込まれている。
 
-## 学習のポイント
+## ハマりどころ
 
-1. **`include` はタスク定義の中には書けない** (`Unexpected token 'include'`)。
+1. `include` はタスク定義の中には**書けない** (`Unexpected token 'include'`)。
    入れ子タスクを別ファイルにするなら、空のコンテナを先に定義し、
    `taskprefix` 付きでトップレベルから include する
 2. **読み込み順が重要**。マクロは使う前に定義され、
    `supplement` は対象が定義済みである必要がある
 3. パスは「**include を書いたファイルからの相対**」で解決される。実行時の CWD ではない
-4. 取り込むファイルは **`.tji` 拡張子でなければならない** (`.tjp` は独立ファイル用)
-5. **`macro` の閉じ括弧 `]` は行の最後の文字**にする。
+4. 取り込むファイルは **`.tji` 拡張子**でなければならない (`.tjp` は独立ファイル用)
+5. `macro` の閉じ括弧 `]` は**行の最後の文字**にする。
    後ろに空白やコメントがあると閉じたとみなされない
 6. `supplement` に渡すのは**ルートからの絶対 ID**
 7. `extend` は `project {}` の中に書く

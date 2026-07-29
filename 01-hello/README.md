@@ -7,16 +7,15 @@ TaskJuggler の最小構成。プロジェクトを宣言し、人を定義し�
 
 ## 学ぶ内容
 
-- [`project`][project] の宣言 — ID / 名前 / 開始日 / 期間 (`+2m` のような相対指定)
-- [`timezone`][timezone] / [`timeformat`][timeformat] / [`now`][now] の設定
-- [`resource`][resource] と [`task`][task] の宣言
-- 期間の3つの指定方法の違い
-  - **[effort][effort]** — 人的工数。担当者が割り当たって初めて期間が決まる
-  - **[duration][duration]** — 暦時間ベース。担当者に依存しない
-  - **[length][length]** — 稼働日ベース。休日は数えないが担当者の負荷には依存しない
-- [`allocate`][allocate] による担当割当
-- [`depends`][depends] による直列化 (`!` は兄弟タスクを指す)
-- [`taskreport`][taskreport] による HTML 出力
+- [`project`][project] — ID / 名前 / 開始日 / 期間 (`+2m` のような相対指定)
+- [`timezone`][timezone] / [`timeformat`][timeformat] / [`now`][now] — 時刻の扱いと表示形式
+- [`resource`][resource] / [`task`][task] — 人とタスクの宣言
+- [`effort`][effort] — 人的工数。担当者が割り当たって初めて期間が決まる
+- [`duration`][duration] — 暦時間ベースの期間。担当者に依存しない
+- [`length`][length] — 稼働日ベースの期間。休日は数えないが担当者の負荷には依存しない
+- [`allocate`][allocate] — タスクへの担当割当
+- [`depends`][depends] — 依存による直列化 (`!` は兄弟タスクを指す)
+- [`taskreport`][taskreport] — HTML レポートの出力
 
 ## 実行結果
 
@@ -89,18 +88,18 @@ tjp の「比較:」で始まる3タスクがこれにあたる。
 迷ったら `effort` を選ぶ。人の作業を `duration` で書くと、
 担当を増やしても稼働時間を変えても計画がまったく反応しなくなる。
 
-## 学習のポイント
+## ハマりどころ
 
-1. **人が手を動かす作業は `effort` で書く**。`duration` / `length` は期間を先に
-   決めてしまうので、増員や稼働率の変更に計画が反応しない
+1. 人が手を動かす作業は `effort` で書く。`duration` / `length` は期間を先に
+   決めてしまうので、増員や稼働率の変更に**計画が反応しない**
 2. `effort` を書いたタスクに `allocate` が無いと**エラーで止まる**。
    担当を決めずに枠だけ取りたいなら `duration` か `length` を使う
 3. `duration` / `length` に `allocate` を足しても**期間は変わらない**。
    変わるのは担当の負荷 (工数) だけ
-4. `depends` の `!` は「親を起点」、つまり兄弟タスクを指す。
+4. `depends` の `!` は「**親を起点**」、つまり兄弟タスクを指す。
    階層をまたぐパスの書き方は 02 で扱う
 5. `now` はレポートの「今日」の位置。ここでは表示上の基準線だが、
-   06 で実績を入れると計画そのものに効いてくる
+   06 で実績を入れると**計画そのものに効いてくる**
 
 ## 得られるもの
 

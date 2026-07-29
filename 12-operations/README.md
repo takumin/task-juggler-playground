@@ -14,12 +14,14 @@
 
 ## 学ぶ内容
 
+- [`trackingscenario`][trackingscenario] — タイムシート / ステータスシートの前提となる指定
 - [`journalentry`][journalentry] — 状況の記録
 - [`alert`][alert] — 警告レベル (green / yellow / red)
 - [`journalmode`][journalmode] — どの記録をレポートに集めるか
 - [`textreport`][textreport] — 報告書としての組版
 - [`timesheetreport`][timesheetreport] — タイムシートのひな形生成
 - [`timesheet`][timesheet] / [`statussheet`][statussheet] — メンバーからの報告フォーマット
+  (この教材が生成するのは timesheet のひな形)
 
 ## journalentry
 
@@ -87,15 +89,12 @@ timesheet alice 2026-08-17-00:00-+0900 - 2026-08-24-00:00-+0900 {
 これらを組み合わせると、メンバーがメールでタイムシートを送り、
 サーバが検証して計画に取り込む、という運用が自動化できる。
 
-## 学習のポイント
+## ハマりどころ
 
-1. **タイムシート/ステータスシートを使うには `trackingscenario` の指定が必須**
+1. タイムシート / ステータスシートを使うには **`trackingscenario` の指定が必須**
 2. `journalentry` は `task` / `resource` / `project` のいずれにも書ける。
    既存タスクに後から足すなら `supplement` を使う
-3. **`timesheetreport` は `outputdir` が効かない** (`export` と同じ)。
-   出力先はレポート名側にパスを書く。拡張子 `.tji` は自動で付く
-   (書き足すと `.tji.tji` になる)
-4. `alertlevels` で独自の警告段階を定義できるが、各レベルに対応する
+3. `alertlevels` で独自の警告段階を定義できるが、各レベルに対応する
    15x15 の `flag-<ID>.png` を出力先の `icons/` に置く必要がある。
    この機能自体も「未テスト」警告つき
 
@@ -111,6 +110,7 @@ timesheet alice 2026-08-17-00:00-+0900 - 2026-08-24-00:00-+0900 {
 
 <!-- 公式リファレンス (https://taskjuggler.org/tj3/manual/) -->
 
+[trackingscenario]: https://taskjuggler.org/tj3/manual/trackingscenario.html
 [journalentry]: https://taskjuggler.org/tj3/manual/journalentry.html
 [alert]: https://taskjuggler.org/tj3/manual/alert.html
 [journalmode]: https://taskjuggler.org/tj3/manual/journalmode.html

@@ -7,11 +7,10 @@
 
 ## 学ぶ内容
 
-- `workinghours` — [project][workinghours.project] / [resource][workinghours.resource] / [shift][workinghours.shift] の3レベル
+- `workinghours` — 稼働時間帯。[project][workinghours.project] / [resource][workinghours.resource] / [shift][workinghours.shift] の3レベルで指定する
 - [`dailyworkinghours`][dailyworkinghours] / [`yearlyworkingdays`][yearlyworkingdays] — 工数と日数の換算係数
-- [`leaves`][leaves] — 祝日・休暇。種別ごとに優先度がある
-- [`shift`][shift] / [`shifts`][shifts] — 稼働時間パターンを再利用可能な形で定義する
-- [`weekstartsmonday`][weekstartsmonday]、[`timingresolution`][timingresolution]
+- [`leaves`][leaves] — 祝日・休暇の定義
+- [`shift`][shift] / [`shifts`][shifts] — 稼働時間パターンの定義とリソースへの割当
 
 ## 実行結果
 
@@ -35,11 +34,11 @@ project < annual < special < sick < unpaid < holiday < unemployed
 グローバル (トップレベル) に書いた `leaves` は以降のリソース定義すべてに継承される。
 リソース側でより優先度の高い種別を書けば上書きできる。
 
-## 学習のポイント
+## ハマりどころ
 
 1. 区間の終了日は 0 時に展開されるため、**終了日当日は含まれない**。
    `2026-08-13 - 2026-08-17` は「8/13〜8/16 の4日間」を意味する
-2. **`leaves` は `project {}` の中ではなくトップレベル (properties スコープ) に書く**
+2. `leaves` は `project {}` の中ではなく**トップレベル (properties スコープ)** に書く
 3. 日本の祝日は自動では入らない。`leaves holiday` で明示的に定義する
    (入れたぶんプロジェクトは延びる)
 4. `dailyworkinghours` は `workinghours` の実態と揃えておく。
@@ -65,5 +64,3 @@ project < annual < special < sick < unpaid < holiday < unemployed
 [leaves]: https://taskjuggler.org/tj3/manual/leaves.html
 [shift]: https://taskjuggler.org/tj3/manual/shift.html
 [shifts]: https://taskjuggler.org/tj3/manual/shifts.resource.html
-[weekstartsmonday]: https://taskjuggler.org/tj3/manual/weekstartsmonday.html
-[timingresolution]: https://taskjuggler.org/tj3/manual/timingresolution.html

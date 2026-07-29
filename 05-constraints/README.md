@@ -4,10 +4,10 @@
 
 ## 学ぶ内容
 
-- [`scheduling asap`][scheduling] / `alap` — 前詰めと後ろ詰め
-- [`start`][start] / [`end`][end] による固定
-- [`minstart`][minstart] / [`maxstart`][maxstart] / [`minend`][minend] / [`maxend`][maxend] — 事後検査 (違反は**エラー**)
-- [`warn`][warn] / [`fail`][fail] — 論理式による事後検査 (`warn` は**警告**で済む)
+- [`scheduling`][scheduling] — `asap` (前詰め) と `alap` (後ろ詰め)
+- [`start`][start] / [`end`][end] — 日付による固定
+- [`minstart`][minstart] / [`maxstart`][maxstart] / [`minend`][minend] / [`maxend`][maxend] — 日付による事後検査
+- [`warn`][warn] / [`fail`][fail] — 論理式による事後検査
 - [`priority`][priority] — リソース競合時にどちらが先に確保するか
 - [`precedes`][precedes] — [`depends`][depends] の逆向き
 - [`responsible`][responsible] / [`flags`][flags] — 分類用の属性
@@ -48,11 +48,11 @@
 
 論理式の中では属性を `plan.end` のように**シナリオ ID 付き**で参照する。
 
-## 学習のポイント
+## ハマりどころ
 
 1. `priority` は「重要度」ではなく「**リソース獲得の優先順位**」。
    既定 500、範囲 1〜1000。リソースを持たないタスク (マイルストーン) には効かない
-2. **ASAP と ALAP を混ぜるとスケジューリングが重くなる**。
+2. ASAP と ALAP を混ぜると**スケジューリングが重くなる**。
    公式マニュアルによれば数百タスク規模で 2〜10 倍の時間差が出ることがあり、
    依存チェーンが絡むと優先度が高いタスクがリソースを取れない事態も起きうる
 3. `flags` は**使う前にトップレベルで宣言**しておく必要がある
