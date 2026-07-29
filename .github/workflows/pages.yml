@@ -94,10 +94,10 @@ jobs:
           pattern: site-*
           merge-multiple: true
 
-      # Pages が未設定のリポジトリでも初回の実行で有効化する
+      # Pages の有効化自体はここではできない (GITHUB_TOKEN に権限が無く
+      # enablement: true は "Resource not accessible by integration" で落ちる)。
+      # 初回だけリポジトリ側で有効にしておく。手順は README の「サイトの生成」
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

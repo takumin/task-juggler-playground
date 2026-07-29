@@ -57,6 +57,9 @@ README・レポート・tjp ソースを 1 ページにまとめて公開する�
 生成は `tools/build-site.rb` (`stages` / `entrypoint` / `stage` / `index` の 4 サブコマンド)。
 組み立て手順は README の「サイトの生成」にある。
 
+- 公開先は <https://takumi.tmfam.com/task-juggler-playground/>
+  (アカウントのカスタムドメイン設定により `github.io` ではない)
+- `tj3` は `-o` のディレクトリを自分では作らない。実行前に `mkdir -p` が要る
 - 段階ディレクトリを増やしてもワークフローの変更は要らない (`stages` が拾う)
 - 段階の tjp が複数あるとエントリポイントを決められない。分割するなら `main.tjp` に寄せる
 - Markdown 変換は kramdown の **GFM パーサ**。素の kramdown は ``` を解釈しない

@@ -7,7 +7,7 @@ TaskJuggler 3.8.4 を段階的に学ぶためのサンプル集。
 
 **解説・生成されたレポート・tjp のソースをまとめたサイトを公開している。**
 手元に環境を作らずブラウザだけで読み進めたいならこちら:
-<https://takumin.github.io/task-juggler-playground/>
+<https://takumi.tmfam.com/task-juggler-playground/>
 
 ## セットアップ
 
@@ -185,6 +185,15 @@ python3 -m http.server 8000 --directory site
 
 `site/` は生成物なので追跡していない。段階ディレクトリを増やしても
 `stages` が拾うため、ワークフローの変更は要らない。
+
+Pages の有効化だけはワークフローからはできない
+(`GITHUB_TOKEN` に権限が無く `configure-pages` の `enablement` は失敗する)。
+リポジトリごとに 1 度だけ、Settings → Pages → Source を **GitHub Actions** にするか、
+以下を実行しておく。
+
+```sh
+gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
+```
 
 サイトの Markdown 変換には kramdown の GFM パーサを使っている。
 `<details>` の中に書いた Markdown を変換させるには
