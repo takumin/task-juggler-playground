@@ -90,14 +90,20 @@ def split_nav(html)
 end
 
 # 段階 README を「h1 と導入文」「最初の h2 の節」「2 番目以降の h2」に分ける。
-# ページを「タイトルと導入 → 生成物 → レポートの内容 → ソース → 解説」の順に組むため。
-# 最初の h2 はどの段階も「レポートの内容」で、生成物一覧の直後に置く
+# ページを「タイトルと導入 → 生成物 → ソース → 解説」の順に組むため。
+# 最初の h2 はどの段階も「レポートの内容」で、生成物一覧と同じ節にまとめる
 def split_readme(html)
   first, second = html.to_enum(:scan, /<h2[\s>]/).map { Regexp.last_match.begin(0) }.first(2)
   return [html, "", ""] unless first
   return [html[0...first], html[first..], ""] unless second
 
   [html[0...first], html[first...second], html[second..]]
+end
+
+# 生成物一覧に流し込む節は、ページ側の「生成されたレポート」を見出しにする。
+# README 側の h2 (「レポートの内容」) は重複するので落とす
+def strip_heading(html)
+  html.sub(%r{\A\s*<h2[^>]*>.*?</h2>\s*}m, "")
 end
 
 # README の h1 をページタイトルに使う
@@ -141,30 +147,29 @@ def artifacts(stage)
      .sort
 end
 
-def artifact_section(stage)
-  files = artifacts(stage)
-  if files.empty?
-    return <<~HTML
-      <section class="artifacts">
-      <h2>生成されたレポート</h2>
-      <p class="empty">この段階には生成物がない。</p>
-      </section>
-    HTML
-  end
-
-  reports, others = files.partition { |name| File.extname(name) == ".html" }
-
-  list = ->(names, klass) do
-    items = names.map { |name| %(<li><a class="#{klass}" href="out/#{name}">#{esc(name)}</a></li>) }
-    "<ul class=\"artifact-list\">\n#{items.join("\n")}\n</ul>"
-  end
-
+# 生成物へのリンクと、README の「レポートの内容」を 1 つの節にまとめる。
+# リンクを開いた読者がそのまま「何が出ているか」を読めるようにするため、
+# 節の中の区切りは README 側の h3 に任せる
+def artifact_section(stage, contents)
   parts = ["<section class=\"artifacts\">", "<h2>生成されたレポート</h2>"]
-  parts << list.call(reports, "report") unless reports.empty?
-  unless others.empty?
-    parts << "<h3>その他の生成物</h3>"
-    parts << list.call(others, "file")
+  files = artifacts(stage)
+
+  if files.empty?
+    parts << %(<p class="empty">この段階には生成物がない。</p>)
+  else
+    # html とそれ以外 (csv / tjp / tji) はアイコンで区別する。
+    # どのファイルが何かは README の表が説明する
+    files.partition { |name| File.extname(name) == ".html" }
+         .zip(%w[report file])
+         .each do |names, klass|
+      next if names.empty?
+
+      items = names.map { |name| %(<li><a class="#{klass}" href="out/#{name}">#{esc(name)}</a></li>) }
+      parts << %(<ul class="artifact-list">\n#{items.join("\n")}\n</ul>)
+    end
   end
+
+  parts << %(<div class="readme">\n#{contents}</div>) unless contents.empty?
   parts << "</section>"
   parts.join("\n")
 end
@@ -216,8 +221,7 @@ def build_stage(stage, output)
   lead, report, rest = split_readme(readme_html)
   body = [
     %(<article class="readme lead">\n#{lead}</article>),
-    artifact_section(stage),
-    report.empty? ? "" : %(<article class="readme report">\n#{report}</article>),
+    artifact_section(stage, strip_heading(report)),
     source_section(stage),
     rest.empty? ? "" : %(<article class="readme">\n#{rest}</article>),
     nav.empty? ? "" : %(<footer class="stage-nav">\n#{nav}</footer>)
