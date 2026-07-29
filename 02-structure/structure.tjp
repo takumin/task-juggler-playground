@@ -1,0 +1,89 @@
+/*
+ * 02: タスク階層 / 依存関係の参照記法 / マイルストーン
+ *
+ * 実行: bundle exec tj3 -o 02-structure/out 02-structure/structure.tjp
+ */
+
+project webapp "Web アプリ開発" 2026-08-03 +3m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+}
+
+resource alice "Alice"
+resource bob   "Bob"
+
+/*
+ * task を入れ子にすると「コンテナタスク」になる。
+ * コンテナ自身は effort を持たず、子タスクの範囲がそのまま期間になる。
+ */
+task spec "要件定義" {
+  task interview "ヒアリング" {
+    effort 3d
+    allocate alice
+  }
+  task doc "仕様書作成" {
+    // ! = 1つ上の階層 (= 親) を起点にする。つまり spec.interview のこと
+    depends !interview
+    effort 5d
+    allocate alice
+  }
+}
+
+task dev "開発" {
+  // 起点なしの ID はルートからの絶対パス。
+  // コンテナに依存すると「その配下が全部終わってから」の意味になる
+  depends spec
+
+  task api "API 実装" {
+    effort 10d
+    allocate bob
+  }
+  task ui "UI 実装" {
+    // !! = 2つ上の階層 (= ルート) を起点に spec.doc を指す。
+    // 絶対パスで spec.doc と書いても同じ
+    depends !!spec.doc
+    effort 8d
+    allocate alice
+  }
+}
+
+task qa "テスト" {
+  /*
+   * gapduration = 暦時間で間隔を空ける (休日も数える)
+   * gaplength   = 稼働時間で間隔を空ける (休日は数えない)
+   *
+   * 依存元の完了が 2026-08-26 18:00 のときの実測差:
+   *   gapduration 5d -> テスト開始 2026-09-01 (48h*... 暦で5日進み、週末を消費)
+   *   gaplength   5d -> テスト開始 2026-09-03 (稼働5日ぶん進むので週末のぶん後ろへ)
+   */
+  depends dev { gapduration 2d }
+  effort 5d
+  allocate bob
+}
+
+/*
+ * milestone は「期間ゼロの時点」。task の属性として宣言する。
+ * effort / duration とは併用できない。
+ */
+task release "リリース" {
+  milestone
+  depends !qa
+}
+
+// ---- レポート ----
+
+taskreport structure "structure" {
+  formats html
+  headline "タスク階層とスケジュール"
+  columns name, start, end, effort, duration, chart
+}
+
+// リソース視点。誰がいつ何をやるか
+resourcereport workload "workload" {
+  formats html
+  headline "リソース別の負荷"
+  columns name, effort, chart
+  // リソース配下に担当タスクをぶら下げて表示する
+  loadunit days
+}

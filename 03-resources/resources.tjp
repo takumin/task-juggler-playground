@@ -1,0 +1,122 @@
+/*
+ * 03: リソース階層 / 複数割当 / efficiency / limits / 代替リソース
+ *
+ * 実行: bundle exec tj3 -o 03-resources/out 03-resources/resources.tjp
+ *
+ * すべてのタスクを 8/3 から並列に走らせ、割当条件の違いだけで
+ * 期間がどう変わるかを比較する。タスクごとに専用の担当を割り当てて
+ * リソース競合が起きないようにしてある。
+ */
+
+project res "リソースの扱い" 2026-08-03 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+}
+
+// ---- リソース定義 ----
+
+resource carol "Carol (PM)"
+
+/*
+ * resource を入れ子にするとチーム階層になる。
+ * 親に書いた属性は子に継承される (継承を断ち切るには purge を使う)。
+ * managers はスケジューリングに影響せず、ドキュメント用途のみ。
+ */
+resource dev "開発チーム" {
+  managers carol
+
+  resource alice "Alice"
+  resource bob   "Bob"
+  resource eve   "Eve"
+
+  // efficiency 0.5 = 半人前。同じ工数に倍の時間がかかる
+  resource dave "Dave (新人)" {
+    efficiency 0.5
+  }
+
+  // limits をリソース側に置くと、そのリソースの全タスク合計に効く
+  resource frank "Frank (他案件と兼務)" {
+    limits {
+      dailymax 4h
+    }
+  }
+
+  resource grace "Grace"
+  resource heidi "Heidi"
+}
+
+/*
+ * efficiency 0.0 = 工数を提供しない。会議室や設備のモデル化に使う。
+ * 予約は取るが、タスクの進捗には寄与しない。
+ */
+resource room "会議室 A" {
+  efficiency 0.0
+}
+
+// ---- タスク: 割当条件の比較 ----
+
+task solo "① 単独作業" {
+  effort 10d
+  allocate alice
+}
+
+// 2名を投入すると工数が分担され、期間はおよそ半分になる
+task pair "② 2名を投入" {
+  effort 10d
+  allocate bob, eve
+}
+
+task slow "③ efficiency 0.5 の担当" {
+  effort 10d
+  allocate dave
+}
+
+task limited "④ 1日 4h までの担当" {
+  effort 10d
+  allocate frank
+}
+
+/*
+ * alternative で代替候補を列挙し、select で選び方を決める。
+ *   order        : リストの先頭から
+ *   minloaded    : 使用実績が最も少ない人
+ *   maxloaded    : 使用実績が最も多い人
+ *   minallocated : 割当係数が最小の人 (デフォルト)
+ *   random       : ランダム
+ * persistent を付けると、いったん選んだ担当を最後まで固定する
+ * (付けないと空きに応じて途中で担当が入れ替わりうる)。
+ */
+task alt "⑤ 代替リソースから選択" {
+  effort 10d
+  allocate grace {
+    alternative heidi
+    select minloaded
+    persistent
+  }
+}
+
+/*
+ * mandatory = その候補が確保できるまでタスクを開始しない。
+ * 会議のように「全員そろわないと成立しない」ものに使う。
+ */
+task meeting "⑥ 全員必須の会議" {
+  duration 2h
+  allocate carol { mandatory }
+  allocate room  { mandatory }
+}
+
+// ---- レポート ----
+
+taskreport tasks "tasks" {
+  formats html
+  headline "割当条件による期間の違い"
+  columns name, start, end, effort, duration, resources, chart
+}
+
+resourcereport people "people" {
+  formats html
+  headline "リソース別の負荷"
+  columns name, effort, chart
+  loadunit days
+}

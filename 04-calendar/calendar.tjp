@@ -1,0 +1,116 @@
+/*
+ * 04: 稼働時間 / 祝日・休暇 / シフト
+ *
+ * 実行: bundle exec tj3 -o 04-calendar/out 04-calendar/calendar.tjp
+ *
+ * 全員に同じ「10人日」のタスクを割り当て、カレンダー設定の違いだけで
+ * 終了日がどれだけずれるかを比較する。
+ */
+
+project cal "カレンダーと稼働時間" 2026-08-03 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+
+  /*
+   * プロジェクト全体の既定の稼働時間。
+   * 省略時は mon-fri 9:00-12:00, 13:00-18:00 (= 8h/日)。
+   * 個々のリソースやシフトで上書きできる。
+   */
+  workinghours mon - fri 9:00 - 12:00, 13:00 - 18:00
+  workinghours sat, sun off
+
+  /*
+   * 工数を日数に換算するときの係数。
+   * workinghours の実態と合わせておかないと、length や
+   * レポートの日数表示がずれる。
+   */
+  dailyworkinghours 8
+  yearlyworkingdays 244
+}
+
+/*
+ * leaves は project {} の中ではなくトップレベル (properties スコープ) に書く。
+ * ここで書いたものは以降のリソース定義すべてに継承される。
+ *
+ * 種別は優先度の低い順に project < annual < special < sick < unpaid
+ *                        < holiday < unemployed。
+ * 優先度が高い種別は低い種別を上書きできる。
+ *
+ * 区間は <date> 単体なら 24 時間、<date> - <date> なら範囲。
+ * 終了日は 0 時に展開されるので「終了日当日は含まれない」ことに注意。
+ */
+leaves holiday "山の日"       2026-08-11,
+       holiday "敬老の日"     2026-09-21,
+       holiday "国民の休日"   2026-09-22,
+       holiday "秋分の日"     2026-09-23
+
+/*
+ * shift は稼働時間・休暇・タイムゾーンをまとめた再利用可能な塊。
+ * リソースやタスクに割り当てて、その期間だけ稼働条件を差し替える。
+ */
+shift shorttime "時短シフト (午前のみ)" {
+  workinghours mon - fri 9:00 - 12:00
+}
+
+// ---- リソース ----
+
+// 何も足さない標準の担当
+resource alice "Alice (標準)"
+
+// 個人の休暇。8/13 - 8/17 と書くと 8/17 は含まれず 8/13〜8/16 が休み
+resource bob "Bob (夏季休暇あり)" {
+  leaves annual "夏季休暇" 2026-08-13 - 2026-08-17
+}
+
+// shifts でシフトを適用する (旧 shift キーワードは非推奨)
+resource carol "Carol (時短)" {
+  shifts shorttime
+}
+
+// リソース単位で稼働時間そのものを差し替える (週4日勤務)
+resource dave "Dave (週4日勤務)" {
+  workinghours mon - thu 9:00 - 12:00, 13:00 - 18:00
+  workinghours fri off
+}
+
+// ---- タスク: 全員に同じ工数を与えて比較する ----
+
+task t_alice "① 標準の担当" {
+  effort 10d
+  allocate alice
+}
+
+task t_bob "② 夏季休暇を挟む担当" {
+  effort 10d
+  allocate bob
+}
+
+task t_carol "③ 時短シフト (3h/日) の担当" {
+  effort 10d
+  allocate carol
+}
+
+task t_dave "④ 週4日勤務の担当" {
+  effort 10d
+  allocate dave
+}
+
+// ---- レポート ----
+
+taskreport tasks "tasks" {
+  formats html
+  headline "カレンダー設定による期間の違い"
+  columns name, start, end, effort, duration, resources, chart
+}
+
+/*
+ * 祝日・休暇はガントチャート上で "Off-duty period" として
+ * 網掛け表示される。日単位まで拡大すると分かりやすい。
+ */
+resourcereport people "people" {
+  formats html
+  headline "稼働状況 (網掛けが非稼働)"
+  columns name, effort, chart
+  loadunit days
+}

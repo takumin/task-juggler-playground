@@ -1,0 +1,17 @@
+/*
+ * リソース定義 (11-modular/resources.tji)
+ *
+ * extend で追加したユーザー定義属性 (Slack) をここで設定している。
+ */
+
+resource alice "Alice" {
+  Slack "@alice"
+}
+
+resource bob "Bob" {
+  Slack "@bob"
+}
+
+resource carol "Carol" {
+  Slack "@carol"
+}

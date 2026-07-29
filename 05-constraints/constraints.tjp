@@ -1,0 +1,124 @@
+/*
+ * 05: 制約とスケジューリング方向
+ *
+ * 実行: bundle exec tj3 -o 05-constraints/out 05-constraints/constraints.tjp
+ *
+ * スケジューラに「いつ置くか」を指示する手段を一通り試す。
+ */
+
+project con "制約とスケジューリング" 2026-08-03 +3m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+}
+
+// フラグは使う前にトップレベルで宣言しておく必要がある
+flags critical, external
+
+resource alice "Alice"
+resource bob   "Bob"
+resource carol "Carol"
+
+// ---- ① ASAP: 既定の前詰め ----
+
+/*
+ * 何も指定しなければ ASAP (As Soon As Possible)。
+ * 開始側の条件 (プロジェクト開始日 / start / depends) を起点に前詰めされる。
+ */
+task asap "① ASAP: できるだけ早く" {
+  effort 5d
+  allocate alice
+}
+
+// ---- ② ALAP: 締め切りからの逆算 ----
+
+// 固定日のマイルストーン。ここが逆算の起点になる
+task deadline "納品期限" {
+  milestone
+  start 2026-09-30
+}
+
+/*
+ * ALAP (As Late As Possible) は終了側の条件 (end / precedes) が必要。
+ * precedes は depends の逆向き ---「自分が終わってから相手が始まる」。
+ *
+ * scheduling は他の属性から暗黙に上書きされうるので、
+ * 公式ドキュメントの推奨どおりタスクの最後に書く。
+ */
+task alap "② ALAP: できるだけ遅く" {
+  effort 5d
+  allocate bob
+  precedes deadline
+  scheduling alap
+}
+
+// ---- ③ 開始日/終了日の固定 ----
+
+/*
+ * start は「ハードな開始条件」。依存関係より強く効く。
+ * end を指定すると ALAP 側の固定になる。
+ */
+task fixed "③ 開始日を固定" {
+  start 2026-08-17
+  effort 5d
+  allocate alice
+}
+
+// ---- ④ 事後チェック ----
+
+/*
+ * minstart / maxstart / minend / maxend はスケジューリングには使われず、
+ * 全タスクを配置し終えた後に検査され、違反すると *エラー* になる。
+ *
+ * warn は同じく事後検査だが *警告* で済む。論理式で条件を書き、
+ * 真になったら警告が出る。属性は scenario_id 付きで参照する (plan.end など)。
+ *
+ * 下は「9/1 より後に終わったら警告」。このタスクは 9/1 以前に終わるので
+ * 警告は出ない。日付を 2026-08-05 などに変えると警告が出るのを確認できる。
+ */
+task checked "④ 期限を検査するタスク" {
+  effort 10d
+  allocate carol
+  maxend 2026-10-31
+  warn plan.end > 2026-09-01
+}
+
+// ---- ⑤ priority によるリソース競合の解決 ----
+
+/*
+ * 同じリソースを奪い合ったとき、priority の高いタスクが先に確保する。
+ * 既定値は 500、範囲は 1〜1000。
+ * 「重要度」ではなく「リソース獲得の優先順位」である点に注意。
+ */
+task high "⑤a 優先度 900" {
+  effort 5d
+  allocate bob
+  priority 900
+}
+
+task low "⑤b 優先度 100" {
+  effort 5d
+  allocate bob
+  priority 100
+}
+
+// ---- ⑥ 分類のための属性 ----
+
+/*
+ * flags はレポートのフィルタ条件に使う (08 で扱う)。
+ * responsible はドキュメント用途のみでスケジューリングに影響しない。
+ */
+task tagged "⑥ フラグと責任者" {
+  effort 3d
+  allocate alice
+  flags critical, external
+  responsible alice
+}
+
+// ---- レポート ----
+
+taskreport tasks "tasks" {
+  formats html
+  headline "制約による配置の違い"
+  columns name, start, end, effort, resources, responsible, chart
+}

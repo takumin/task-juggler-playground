@@ -1,0 +1,16 @@
+/*
+ * サブタスク定義 (11-modular/subtasks.tji)
+ *
+ * 親タスクの中に include されるので、ここでは task だけを並べる。
+ */
+
+task deploy "デプロイ" {
+  ${DevTask "bob" "2d" "PROJ-201"}
+  Points 2
+}
+
+task monitor "経過観察" {
+  depends !deploy
+  ${ReviewTask "alice" "5d"}
+  Points 1
+}

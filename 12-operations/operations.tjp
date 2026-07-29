@@ -1,0 +1,181 @@
+/*
+ * 12: 運用・チーム連携
+ *
+ * 実行: bundle exec tj3 -o 12-operations/out 12-operations/operations.tjp
+ *
+ * 計画を立てて終わりではなく、状況を記録し、報告書を出し、
+ * メンバーから実績を集める、という継続運用の部分を扱う。
+ */
+
+project ops "運用とチーム連携" 2026-08-01 +3m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-08-17
+
+  // タイムシート/ステータスシートを使うには trackingscenario の指定が必須
+  trackingscenario plan
+
+  /*
+   * 警告レベルは既定で green / yellow / red の3段階。
+   * alertlevels で独自の段階に置き換えられるが、
+   * 各レベルに対応する 15x15 の flag-<ID>.png を
+   * 出力先の icons ディレクトリに置く必要がある。
+   */
+}
+
+resource alice "Alice"
+resource bob   "Bob"
+resource carol "Carol (PM)"
+
+// ---- タスクと状況記録 ----
+
+/*
+ * journalentry は「いつ何があったか」の記録。
+ *   journalentry <日付> "<見出し>" { ... }
+ *
+ * 見出しは必須で 5〜10 語程度。summary は 1〜2 文の要約、
+ * details に詳細を書く。いずれも Rich Text。
+ * alert で警告レベルを付けると、レポートに信号色で出る。
+ */
+
+task design "設計" {
+  effort 5d
+  allocate alice
+  complete 100
+
+  journalentry 2026-08-07 "設計完了" {
+    author alice
+    alert green
+    summary -8<-
+      レビュー指摘なしで完了。
+    ->8-
+  }
+}
+
+task impl "実装" {
+  depends !design
+  effort 15d
+  allocate bob
+  complete 40
+
+  journalentry 2026-08-10 "実装着手" {
+    author bob
+    alert green
+    summary -8<-
+      予定どおり着手。
+    ->8-
+  }
+
+  journalentry 2026-08-17 "外部APIの仕様変更で遅延見込み" {
+    author bob
+    alert red
+    summary -8<-
+      連携先APIの仕様変更が判明。追加調査が必要。
+    ->8-
+    details -8<-
+      当初想定していた認証方式が廃止され、OAuth2 への
+      切り替えが必要になった。影響範囲を調査中で、
+      現時点で 3〜5 人日の追加を見込んでいる。
+
+      * 影響: 認証まわりの実装をやり直し
+      * 対応: 8/19 までに方式を決定する
+    ->8-
+  }
+}
+
+task test "テスト" {
+  depends !impl
+  effort 8d
+  allocate carol
+
+  journalentry 2026-08-17 "テスト計画は準備済み" {
+    author carol
+    alert yellow
+    summary -8<-
+      実装の遅延次第で開始がずれる見込み。
+    ->8-
+  }
+}
+
+// プロジェクト全体に対する記録も残せる
+supplement task impl {
+  journalentry 2026-08-18 "対応方針を決定" {
+    author carol
+    alert yellow
+    summary -8<-
+      OAuth2 対応を優先し、管理画面の一部を次フェーズへ送る。
+    ->8-
+  }
+}
+
+// ---- ① 状況一覧 ----
+
+/*
+ * journalmode で、どのジャーナルを集めるかを決める。
+ *   journal      : 期間内の全エントリ
+ *   journal_sub  : そのタスクと配下の全エントリ
+ *   status_up    : 各プロパティの最新エントリのみ (親に新しい記録があれば親を優先)
+ *   status_down  : 各プロパティと配下の最新エントリ
+ *   alerts_dep   : 依存関係もたどって警告のみ集める
+ *
+ * alert 列には信号色のアイコンが出る。
+ */
+taskreport status "01-status" {
+  formats html
+  headline "週次ステータス (最新の記録のみ)"
+  columns name, alert, complete, start, end, journal
+  journalmode status_down
+}
+
+// ---- ② 記録の全履歴 ----
+
+taskreport journal "02-journal" {
+  formats html
+  headline "記録の全履歴"
+  columns name, alert, journal
+  journalmode journal
+  // 期間を絞ると、その間の記録だけが出る
+  period 2026-08-01 +1m
+}
+
+// ---- ③ 報告書として組版する ----
+
+/*
+ * textreport で見出しや文章と一緒にレポートを埋め込むと、
+ * そのまま配布できる報告書になる。
+ */
+textreport report "03-weekly-report" {
+  formats html
+  header -8<-
+    == 週次進捗報告 (2026-08-17 時点) ==
+  ->8-
+  center -8<-
+    === 現在の状況 ===
+    <[report id="status"]>
+
+    === 今週の記録 ===
+    <[report id="journal"]>
+  ->8-
+  footer -8<-
+    ---- 作成: TaskJuggler ----
+  ->8-
+}
+
+// ---- ④ タイムシートのひな形を配る ----
+
+/*
+ * timesheetreport は、メンバーに配布するタイムシートの下書きを生成する。
+ * 計画データから「今週やる予定の作業」が埋まった状態で出てくるので、
+ * メンバーは実績を書き込んで返すだけでよい。
+ *
+ * 注意: export と同様 -o の出力先が効かず、カレントディレクトリ基準になる。
+ * 出力先を揃えたいならファイル名側にパスを書く。
+ * 拡張子 .tji は自動で付くので書かない (書くと .tji.tji になる)。
+ *
+ * 集めたタイムシートは include して取り込むと booking に変換される。
+ * 運用では tj3ts (タイムシート受付) / tj3ss (ステータスシート受付) と
+ * tj3d (サーバ) / tj3client を組み合わせて自動化する。
+ */
+timesheetreport sheets "12-operations/out/04-timesheet-draft" {
+  period 2026-08-17 +1w
+}

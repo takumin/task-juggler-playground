@@ -1,0 +1,23 @@
+/*
+ * 実績データ (11-modular/actuals.tji)
+ *
+ * supplement を使うと、既に定義済みのタスク/リソースに
+ * 後から属性を追加できる。
+ *
+ * 計画 (tasks.tji) と実績 (このファイル) を分けておくと、
+ * 実績だけを別ツールで生成して差し替えられる。
+ * supplement に渡すのはルートからの絶対IDである点に注意。
+ */
+
+supplement task design {
+  booking alice 2026-08-03 - 2026-08-08 { sloppy 2 }
+}
+
+supplement task impl {
+  booking bob 2026-08-10 - 2026-08-15 { sloppy 2 }
+}
+
+// リソースにも後付けできる
+supplement resource carol {
+  leaves annual "夏季休暇" 2026-08-24 - 2026-08-26
+}

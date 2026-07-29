@@ -1,0 +1,38 @@
+/*
+ * タスク定義 (11-modular/tasks.tji)
+ *
+ * macros.tji で定義したマクロを展開して記述量を減らしている。
+ */
+
+task design "設計" {
+  ${DevTask "alice" "5d" "PROJ-101"}
+  Points 8
+}
+
+task impl "実装" {
+  depends !design
+  ${DevTask "bob" "12d" "PROJ-102"}
+  Points 21
+}
+
+task review "コードレビュー" {
+  depends !impl
+  ${ReviewTask "carol" "3d"}
+  Points 3
+}
+
+/*
+ * 入れ子のタスクを別ファイルに切り出す場合、
+ * include はタスク定義の *中* には書けない (Unexpected token 'include')。
+ * 空のコンテナを先に定義し、taskprefix 付きで include して子を流し込む。
+ *
+ * taskprefix を指定すると、取り込んだタスクは
+ * そのIDのタスクの配下として定義される。
+ */
+task phase2 "フェーズ2" {
+  depends !review
+}
+
+include "subtasks.tji" {
+  taskprefix phase2
+}

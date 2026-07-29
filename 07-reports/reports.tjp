@@ -1,0 +1,197 @@
+/*
+ * 07: レポートの種類とカスタマイズ
+ *
+ * 実行: bundle exec tj3 -o 07-reports/out 07-reports/reports.tjp
+ *
+ * 同じプロジェクトデータから、見せ方の違うレポートを何種類も出す。
+ */
+
+project rep "レポート機能" 2026-08-03 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-08-17
+}
+
+flags critical
+
+resource alice "Alice"
+resource bob   "Bob"
+
+// ---- 題材となるタスク ----
+
+task phase1 "フェーズ1: 開発" {
+  task design "設計" {
+    effort 5d
+    allocate alice
+    complete 100
+  }
+  task impl "実装" {
+    depends !design
+    effort 12d
+    allocate bob
+    flags critical
+    complete 40
+  }
+}
+
+task phase2 "フェーズ2: 検証" {
+  depends phase1
+  task test "テスト" {
+    effort 6d
+    allocate alice
+  }
+  task release "リリース" {
+    depends !test
+    milestone
+  }
+}
+
+// ---- ① 基本形。HTML と CSV を同時に出す ----
+
+/*
+ * formats に複数指定すると、同じ内容を別形式で同時出力する。
+ * csv は Excel や他ツールへの受け渡しに使う (chart 列は CSV では無視される)。
+ */
+taskreport basic "01-basic" {
+  formats html, csv
+  headline "① 基本のタスクレポート"
+  columns name, start, end, effort, complete, chart
+}
+
+// ---- ② 列のカスタマイズ ----
+
+/*
+ * 各列は { } で個別に設定できる。
+ *   title     : 見出しの差し替え
+ *   cellcolor : 条件に合うセルの背景色 (論理式 + "#RRGGBB")
+ *   celltext  : 条件に合うセルの表示文字列の差し替え
+ *
+ * 論理式の中では属性を scenario_id 付きで参照する (plan.effort など)。
+ * 宣言済みのフラグ名はそのまま条件に書ける。
+ */
+taskreport styled "02-styled" {
+  formats html
+  headline "② 列を装飾したレポート"
+  columns name,
+          start,
+          end,
+          effort {
+            title "工数 (人日)"
+            // 10人日を超える重いタスクを赤く塗る
+            cellcolor plan.effort > 10.0 "#FFC0C0"
+          },
+          complete {
+            title "進捗"
+            // 未着手のセルだけ文言を差し替える
+            celltext plan.complete = 0 "未着手"
+          }
+}
+
+// ---- ③ 折りたたみとフィルタ ----
+
+/*
+ * rolluptask は「条件に合うタスクの子を表示しない」。
+ * treelevel() はツリーの深さ (最上位が 1)。
+ * 下の指定で第1階層だけのサマリー表になる。
+ */
+taskreport summary "03-summary" {
+  formats html
+  headline "③ 第1階層だけのサマリー"
+  columns name, start, end, effort, complete
+  rolluptask treelevel() = 1
+}
+
+// ---- ④ 並び替え ----
+
+/*
+ * sorttasks は「属性.up (昇順) / 属性.down (降順)」で指定する。
+ * 先頭に tree を置くとツリー構造を保ったまま並べ替える。
+ * 下はツリーを崩して工数の多い順に並べる例。
+ */
+taskreport sorted "04-sorted" {
+  formats html
+  headline "④ 工数の多い順"
+  columns name, effort, start, end
+  sorttasks plan.effort.down
+  // 葉タスクだけを対象にする (コンテナを除く)
+  hidetask ~isleaf()
+}
+
+// ---- ⑤ 時系列の集計表 ----
+
+/*
+ * columns に weekly / monthly / daily などを置くと、
+ * 期間を区切った負荷の集計表になる。
+ * loadunit で単位 (days / hours など)、period で対象期間を絞る。
+ */
+taskreport weekly "05-weekly" {
+  formats html
+  headline "⑤ 週次の工数配分"
+  columns name, weekly
+  loadunit days
+  period 2026-08-03 +6w
+}
+
+// ---- ⑥ リソース視点 ----
+
+resourcereport people "06-people" {
+  formats html
+  headline "⑥ リソース別の負荷"
+  columns name, effort, weekly
+  loadunit days
+  // 空き時間も見たいので葉リソースのみ表示
+  hideresource ~isleaf()
+}
+
+// ---- ⑦ 他ツールへの書き出し ----
+
+/*
+ * export は TaskJuggler 自身が読み込める .tjp を書き出す。
+ * スケジュール結果が booking 付きで出力されるので、
+ * 実績の受け渡しやサブプロジェクトの統合に使える。
+ *
+ * 注意: export レポートだけは -o / outputdir の指定が効かず、
+ * 常にカレントディレクトリ基準で出力される。
+ * 出力先を揃えたいならファイル名側にパスを書く。
+ * 拡張子は自動で付く (project ヘッダを含むなら .tjp、断片なら .tji)。
+ */
+export exported "07-reports/out/07-export" {
+  formats tjp
+}
+
+// ---- ⑧ 複数レポートを1ページにまとめる ----
+
+/*
+ * navigator は他レポートへのリンクバーを作る。
+ * hidereport で載せないレポートを論理式で除外する (0 = 何も隠さない)。
+ */
+navigator navbar {
+  hidereport 0
+}
+
+/*
+ * textreport は header / center (left・right マージンつき) / footer の
+ * 5 つの Rich Text 区画からなる。区画の中には他のレポートを埋め込める。
+ *
+ *   -8<- ... ->8-        Rich Text ブロックの囲み
+ *   == 見出し ==          見出し
+ *   <[navigator id="x"]> ナビゲーションバーの埋め込み
+ *   <[report id="x"]>    他レポートの埋め込み
+ */
+textreport index "index" {
+  formats html
+  header -8<-
+    == レポート索引 ==
+    <[navigator id="navbar"]>
+  ->8-
+  center -8<-
+    === 全体像 ===
+    <[report id="basic"]>
+
+    === 装飾つき ===
+    <[report id="styled"]>
+  ->8-
+  footer -8<-
+    ---- 生成: TaskJuggler ----
+  ->8-
+}

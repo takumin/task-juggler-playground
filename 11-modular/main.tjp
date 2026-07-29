@@ -1,0 +1,76 @@
+/*
+ * 11: ファイル分割・マクロ・ユーザー定義属性
+ *
+ * 実行: bundle exec tj3 -o 11-modular/out 11-modular/main.tjp
+ *
+ * 構成:
+ *   main.tjp      プロジェクトヘッダとレポート (このファイル)
+ *   macros.tji    マクロ定義
+ *   resources.tji リソース定義
+ *   tasks.tji     タスク定義 (計画)
+ *   subtasks.tji  タスクの入れ子に取り込まれる断片
+ *   actuals.tji   実績データ (supplement)
+ */
+
+project mod "モジュール構成" 2026-08-01 +3m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-08-17
+  trackingscenario plan
+
+  /*
+   * extend でタスクやリソースに独自の属性を追加できる。
+   * 追加した属性はレポートの列としてそのまま使える。
+   *
+   * 型は text / number / date / reference / richtext。
+   * extend は project ヘッダの中に書く。
+   */
+  extend task {
+    text   Ticket "チケット"
+    number Points "見積SP"
+  }
+
+  extend resource {
+    text Slack "Slack ID"
+  }
+}
+
+/*
+ * include はそのファイルの中身をその場に展開する。
+ * 取り込むファイルは .tji 拡張子でなければならない
+ * (.tjp はプロジェクトヘッダを持つ独立ファイル用)。
+ *
+ * パスは「include を書いたファイルからの相対」で解決される。
+ * 実行時のカレントディレクトリではない点に注意。
+ *
+ * 読み込み順は重要。マクロは使う前に定義されている必要があり、
+ * supplement は対象のタスク/リソースが定義済みでなければならない。
+ */
+include "macros.tji"
+include "resources.tji"
+include "tasks.tji"
+include "actuals.tji"
+
+// ---- レポート ----
+
+/*
+ * extend で足した Ticket / Points / Slack をそのまま列に使える。
+ */
+taskreport plan "01-plan" {
+  formats html
+  headline "計画とチケット番号"
+  columns name, Ticket, Points, start, end, effort, resources
+}
+
+taskreport progress "02-progress" {
+  formats html
+  headline "実績を反映した状態 (now = 2026-08-17)"
+  columns name, Ticket, start, end, effort, complete, chart
+}
+
+resourcereport people "03-people" {
+  formats html
+  headline "リソース一覧 (ユーザー定義属性つき)"
+  columns name, Slack, effort
+  hideresource ~isleaf()
+}

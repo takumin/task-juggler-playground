@@ -1,0 +1,160 @@
+/*
+ * 10: コストと収支
+ *
+ * 実行: bundle exec tj3 -o 10-cost/out 10-cost/cost.tjp
+ *
+ * リソース単価から人件費を積み上げ、固定費と売上を加えて収支を出す。
+ */
+
+/*
+ * project ヘッダの日付は timezone 属性より先に解釈されるため UTC 基準になる。
+ * "2026-08-03" と書くと実際の開始は 8/3 09:00 JST になり、
+ * タスク側で start 2026-08-03 (= 0:00 JST) を指定すると期間外エラーになる。
+ * 開始を週末側に広げて回避する (06-progress と同じ理由)。
+ */
+project cost "コスト計算" 2026-08-01 +3m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+
+  currency "JPY"
+  /*
+   * currencyformat <負数の接頭辞> <負数の接尾辞> <千位区切り> <小数点> <小数桁数>
+   * 既定はヨーロッパ式 (1.234.567,89) なので日本式に直す。
+   */
+  currencyformat "-" "" "," "." 0
+}
+
+/*
+ * account は勘定科目。入れ子にできるが、金額を計上できるのは
+ * 末端 (leaf) の科目だけ。
+ * 収支分析をするなら、費用側と収益側でトップレベルを分けておく。
+ *
+ * aggregate で「何に由来する金額を集める科目か」を宣言する。
+ *   tasks     : タスクに紐づく金額を集める (既定)
+ *   resources : リソースに紐づく金額を集める
+ *
+ * ここでは全科目を aggregate tasks にし、タスク側の chargeset で
+ * 費用を振り分ける。こうするとリソースの rate による人件費も
+ * 「そのタスクのコスト」として集計され、タスク別の原価が見える。
+ *
+ * 逆にリソース単位で集計したい場合は、科目を aggregate resources にして
+ * resource 側に chargeset を書く。その科目をタスクの chargeset に
+ * 指定すると「cannot aggregate amounts related to resources」エラーになる。
+ */
+account costs "費用" {
+  account labor       "人件費"   { aggregate tasks }
+  account outsourcing "外注費"   { aggregate tasks }
+  account misc        "諸経費"   { aggregate tasks }
+}
+
+account revenues "収益" {
+  account payment "検収入金" { aggregate tasks }
+}
+
+/*
+ * balance <費用のトップ科目> <収益のトップ科目>
+ * これを指定すると accountreport が収支モードになり、
+ * 末尾に「収益 - 費用」の行が付く。
+ * レポートの cost / revenue 列も balance の定義が前提になっており、
+ * 未定義だとセルが "No 'balance' defined!" になる。
+ */
+balance costs revenues
+
+// ---- リソースと単価 ----
+
+// rate はリソースの「1日あたり」の費用
+resource alice "Alice (社員)" {
+  rate 50000
+}
+
+resource bob "Bob (社員)" {
+  rate 45000
+}
+
+resource carol "Carol (協力会社)" {
+  rate 80000
+}
+
+// ---- タスク ----
+
+// 5人日 x 50,000 = 250,000 が labor に計上される
+task design "設計" {
+  effort 5d
+  allocate alice
+  chargeset labor
+}
+
+/*
+ * chargeset は複数科目への按分もできる。
+ * 合計は必ず 100% にする (省略した科目には残りが均等配分される)。
+ * 按分する科目は同じトップレベル科目の配下でなければならない。
+ */
+task impl "実装" {
+  depends !design
+  effort 20d
+  allocate bob, carol
+  chargeset labor 60%, outsourcing 40%
+}
+
+/*
+ * charge はタスクに紐づく一時費用・継続費用。
+ *   onstart / onend            : 開始時・終了時に一括
+ *   perhour / perday / perweek : 期間に比例
+ * どの科目に付くかはタスクの chargeset で決まる。
+ */
+task tooling "ツールライセンス購入" {
+  start 2026-08-03
+  duration 1d
+  chargeset misc
+  charge 300000 onstart
+}
+
+task office "作業スペース賃料" {
+  start 2026-08-03
+  duration 60d
+  chargeset misc
+  charge 20000 perweek
+}
+
+// ---- 収益 ----
+
+// 収益側も同じ仕組み。収益科目を chargeset に指定して charge で計上する
+task delivery "納品・検収" {
+  milestone
+  depends !impl
+  chargeset payment
+  charge 8000000 onend
+}
+
+// ---- レポート ----
+
+/*
+ * accountreport は科目ごとの集計表。
+ * balance が設定されているので、末尾に収支 (収益 - 費用) の行が入る。
+ */
+accountreport summary "01-balance" {
+  formats html
+  headline "収支サマリー"
+  columns name, turnover, monthly
+}
+
+/*
+ * タスク側から見た原価。
+ *   cost     : 費用科目に計上された額
+ *   revenue  : 収益科目に計上された額
+ *   turnover : その科目に計上された総額
+ */
+taskreport taskcost "02-task-cost" {
+  formats html
+  headline "タスク別のコスト"
+  columns name, start, end, effort, cost, revenue
+}
+
+// リソース単価と稼働の一覧
+resourcereport rescost "03-resource-cost" {
+  formats html
+  headline "リソース別の単価と稼働"
+  columns name, rate, effort, cost
+  hideresource ~isleaf()
+}

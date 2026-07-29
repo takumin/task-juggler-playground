@@ -1,0 +1,206 @@
+/*
+ * 08: 論理式によるフィルタリング
+ *
+ * 実行: bundle exec tj3 -o 08-filters/out 08-filters/filters.tjp
+ *
+ * 同じタスクツリーに対して、hidetask / hideresource の条件だけを
+ * 変えたレポートを並べ、論理式の書き方を一通り試す。
+ *
+ * 論理式の基本:
+ *   ~   否定       &   かつ       |   または
+ *   属性は scenario_id 付きで参照する (plan.effort など)。
+ *   非シナリオ属性 (id, name) でも scenario_id が必要。
+ *   宣言済みのフラグ名はそのまま条件として書ける。
+ *   hide〜 は「隠す条件」なので、「〜だけ表示」は ~ で反転させる。
+ */
+
+project filt "論理式とフィルタ" 2026-08-03 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-08-17
+}
+
+flags critical, external
+
+resource alice "Alice"
+resource bob   "Bob"
+resource carol "Carol"
+
+// ---- 題材 ----
+
+task phase1 "フェーズ1: 開発" {
+  task design "設計" {
+    effort 5d
+    allocate alice
+  }
+  task impl "実装" {
+    depends !design
+    effort 12d
+    allocate bob
+    flags critical
+  }
+  task gate1 "フェーズ1完了" {
+    milestone
+    depends !impl
+  }
+}
+
+task phase2 "フェーズ2: 検証" {
+  depends phase1
+  task test "テスト" {
+    effort 6d
+    allocate carol
+    flags external
+  }
+  task fix "不具合対応" {
+    depends !test
+    effort 4d
+    allocate bob
+    flags critical
+  }
+  task gate2 "リリース" {
+    milestone
+    depends !fix
+  }
+}
+
+// ---- ① 葉タスクだけ ----
+
+// isleaf() = 子を持たないタスク。コンテナの集計行を消して一覧にする
+taskreport leaves "01-leaves" {
+  formats html
+  headline "① 葉タスクのみ"
+  columns name, start, end, effort, resources
+  hidetask ~isleaf()
+}
+
+// ---- ② マイルストーンだけ ----
+
+/*
+ * 関数によって必要な引数が違う。
+ *   引数なし : isleaf() / treelevel() / istask() / isresource()
+ *   シナリオID: ismilestone(plan) / isactive(plan) / isongoing(plan)
+ *   その他    : ischildof(ID) / isdutyof(ID, シナリオ) など
+ * 引数の数が合わないとエラーになるので tj3man で確認するのが早い。
+ */
+taskreport milestones "02-milestones" {
+  formats html
+  headline "② マイルストーンのみ"
+  columns name, start
+  hidetask ~ismilestone(plan)
+}
+
+// ---- ③ 特定のサブツリーだけ ----
+
+/*
+ * ischildof(ID) は「その配下か」を判定する。親自身は含まれないので、
+ * 親も出したい場合は id で明示的に足す。
+ *
+ * 注意: 比較演算子は & | より結合が弱い。括弧を省くと
+ *   ischildof(phase1) | plan.id = "phase1"
+ * が (ischildof(phase1) | plan.id) = "phase1" と解釈されて
+ * 「First operand ... must be a date, a number or a string」エラーになる。
+ * 比較は必ず括弧で囲む。
+ */
+taskreport subtree "03-subtree" {
+  formats html
+  headline "③ フェーズ1の配下だけ"
+  columns name, start, end, effort
+  hidetask ~(ischildof(phase1) | (plan.id = "phase1"))
+}
+
+// ---- ④ フラグで絞る ----
+
+// 宣言済みのフラグ名はそのまま条件になる
+taskreport crit "04-critical" {
+  formats html
+  headline "④ critical フラグの付いたタスク"
+  columns name, start, end, effort, flags
+  hidetask ~critical
+}
+
+// ---- ⑤ 属性値の比較 ----
+
+taskreport heavy "05-heavy" {
+  formats html
+  headline "⑤ 工数が5人日を超えるタスク"
+  columns name, effort, resources
+  hidetask ~(plan.effort > 5.0)
+}
+
+// ---- ⑥ 条件の組み合わせ ----
+
+// 「葉タスク」かつ「critical でない」もの
+taskreport combo "06-combo" {
+  formats html
+  headline "⑥ critical でない葉タスク"
+  columns name, effort, flags
+  hidetask ~(isleaf() & ~critical)
+}
+
+// ---- ⑦ 階層の深さで絞る ----
+
+// treelevel() は最上位が 1。第1階層だけのサマリーになる
+taskreport toplevel "07-toplevel" {
+  formats html
+  headline "⑦ 最上位のタスクのみ"
+  columns name, start, end, effort
+  hidetask treelevel() > 1
+}
+
+// ---- ⑧ 担当者で絞る ----
+
+// isdutyof(リソースID, シナリオID)
+taskreport byperson "08-bob" {
+  formats html
+  headline "⑧ Bob が担当するタスク"
+  columns name, start, end, effort
+  hidetask ~isdutyof(bob, plan)
+}
+
+// ---- ⑨ 依存の連鎖で絞る ----
+
+/*
+ * isdependencyof(タスクID, シナリオID, 距離)
+ *
+ * 名前に反して、抽出されるのは「指定タスクが依存している *先行* タスク」
+ * と指定タスク自身。後続タスクではない。
+ * リリースを起点にすれば、そこに至るまでの全工程が取り出せる。
+ *
+ * 距離は依存チェーンを何ホップ遡るか。実測 (起点 = phase2.gate2):
+ *   距離 1 -> フェーズ2, リリース                    (直前まで)
+ *   距離 2 -> さらにフェーズ1配下と不具合対応まで
+ *   距離 0 -> 距離を問わず全ての先行タスク
+ *
+ * 注意: 関数に渡すタスクIDはルートからのフルパスで書く。
+ * ネストしたタスクを "gate2" と短く書いても一致せず、
+ * エラーも出ないまま結果が空になる。
+ */
+taskreport predecessors "09-predecessors" {
+  formats html
+  headline "⑨ リリースに至るまでの全先行タスク"
+  columns name, start, end
+  hidetask ~isdependencyof(phase2.gate2, plan, 0)
+}
+
+// ---- ⑩ スコープ側で評価する _ 付き関数 ----
+
+/*
+ * タスクレポートの中にリソース行をネストさせると、
+ * リソース行にとっての「スコープ」は囲んでいるタスクになる。
+ *
+ * 関数名の末尾に _ を付けると、その関数はスコープ側 (ここではタスク) を
+ * 対象に評価される。
+ *
+ *   isleaf()   -> リソースが葉かどうか
+ *   isleaf_()  -> 囲んでいるタスクが葉かどうか
+ *
+ * 下の式は「葉リソースを、葉タスクの下にだけ表示する」という意味になる。
+ */
+taskreport nested "10-nested" {
+  formats html
+  headline "⑩ タスクの下に担当者をネスト表示"
+  columns name, start, end, effort
+  hidetask ~isleaf()
+  hideresource ~(isleaf() & isleaf_())
+}

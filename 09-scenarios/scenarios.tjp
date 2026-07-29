@@ -1,0 +1,106 @@
+/*
+ * 09: シナリオによる what-if 分析
+ *
+ * 実行: bundle exec tj3 -o 09-scenarios/out 09-scenarios/scenarios.tjp
+ *
+ * 同じタスクツリーを、条件だけ変えた3つのシナリオで同時にスケジュールし、
+ * 結果を横並びで比較する。
+ */
+
+project sc "シナリオ比較" 2026-08-03 +4m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  now 2026-07-29
+
+  /*
+   * トップレベルのシナリオは1つだけ。その中に入れ子で派生を作る。
+   * 派生シナリオは親のすべての値を引き継ぎ、
+   * 明示的に上書きした属性だけが変わる。
+   *
+   * 既定では plan という名前のシナリオが1つだけ存在する。
+   */
+  scenario plan "基本計画" {
+    scenario crash "突貫案"
+    scenario risk  "遅延ケース"
+  }
+}
+
+resource alice "Alice"
+resource bob   "Bob"
+resource carol "Carol"
+resource dave  "Dave"
+
+/*
+ * シナリオ固有の値は「シナリオID:属性」の形で書く。
+ * 指定しなかったシナリオは親の値をそのまま使う。
+ *
+ * どの属性がシナリオ固有かは tj3man task の [sc] マークで分かる。
+ * effort / duration / allocate / depends / start / priority などが該当する。
+ */
+
+task design "設計" {
+  effort 5d
+  allocate alice
+
+  // 遅延ケースでは見積りが甘かったことにする
+  risk:effort 8d
+}
+
+task impl "実装" {
+  depends !design
+  effort 20d
+  allocate bob
+
+  // 突貫案では2人体制にする (工数は同じでも期間が縮む)
+  crash:allocate bob, carol
+
+  // 遅延ケースでは工数そのものが膨らむ
+  risk:effort 30d
+}
+
+task test "テスト" {
+  depends !impl
+  effort 8d
+  allocate dave
+
+  // 突貫案ではテストを削る
+  crash:effort 5d
+}
+
+task release "リリース" {
+  milestone
+  depends !test
+}
+
+// ---- レポート ----
+
+/*
+ * scenarios にシナリオIDを並べると、1タスクにつき
+ * シナリオの数だけ行が出る。scenario 列でどの行がどれか分かる。
+ */
+taskreport compare "01-compare" {
+  formats html
+  headline "3シナリオの比較"
+  columns name, scenario, start, end, effort, resources
+  scenarios plan, crash, risk
+}
+
+// リリース日だけを比べる
+taskreport milestones "02-milestones" {
+  formats html
+  headline "リリース日の比較"
+  columns name, scenario, start
+  hidetask ~ismilestone(plan)
+  scenarios plan, crash, risk
+}
+
+/*
+ * ガントチャートに複数シナリオを重ねると、
+ * 同じタスクのバーが縦に並んでずれ方が視覚的に分かる。
+ */
+taskreport gantt "03-gantt" {
+  formats html
+  headline "シナリオを重ねたガントチャート"
+  columns name, scenario, chart
+  scenarios plan, crash, risk
+}

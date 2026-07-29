@@ -1,0 +1,109 @@
+/*
+ * 06: 進捗と実績の追跡
+ *
+ * 実行: bundle exec tj3 -o 06-progress/out 06-progress/progress.tjp
+ *
+ * now を 8/17 に置き、それ以前の実績を booking で与える。
+ * TaskJuggler は now より前には新たな割当をせず、
+ * 残作業だけを now 以降に再配置する (projection モード)。
+ */
+
+/*
+ * 注意: project ヘッダの日付は timezone 属性を読む *前* に解釈されるため
+ * UTC 基準になる。"2026-08-03" と書くとプロジェクト開始は
+ * 2026-08-03 09:00 JST になり、8/3 0:00 を含む booking は
+ * 「プロジェクト期間外」エラーになる。
+ * 実績を日付境界で書きたいので、開始を週末側に少し広げてある。
+ */
+project prog "進捗と実績" 2026-08-01 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+
+  // 「今日」をプロジェクト途中に置く。ここが計画と実績の境界になる
+  now 2026-08-17
+
+  /*
+   * 実績を記録するシナリオを指定する。
+   * これを指定すると、そのシナリオは projection モードでスケジュールされ、
+   * now より前の割当は booking で与えられたものだけになる。
+   *
+   * 旧 projection キーワードは非推奨。booking があれば自動で有効になる。
+   */
+  trackingscenario plan
+}
+
+resource alice "Alice"
+resource bob   "Bob"
+resource carol "Carol"
+
+// ---- ① 実績どおり完了したタスク ----
+
+/*
+ * booking は「実際に作業した時間」を記録する。
+ *   sloppy 0 : 非稼働時間・休暇・他タスクの割当を一切含んではいけない (既定)
+ *   sloppy 1 : 非稼働時間は含んでよい
+ *   sloppy 2 : 非稼働時間と休暇を含んでよい
+ *
+ * 区間は <日付> - <日付> 形式。終了日は 0 時に展開されるので
+ * 8/3 - 8/8 は「8/3〜8/7 の 5 日間」を意味する。
+ * 区間内の稼働時間だけが実績として計上される (5 日 x 8h = 40h = 5人日)。
+ */
+task done "① 予定どおり完了" {
+  effort 5d
+  allocate alice
+  booking alice 2026-08-03 - 2026-08-08 { sloppy 2 }
+}
+
+// ---- ② 途中まで進んで遅れているタスク ----
+
+/*
+ * 10 人日のうち 5 人日ぶんだけ実績がある。
+ * 残り 5 人日は now (8/17) 以降に再スケジュールされる。
+ */
+task delayed "② 半分だけ進んだ" {
+  effort 10d
+  allocate bob
+  booking bob 2026-08-10 - 2026-08-15 { sloppy 2 }
+}
+
+// ---- ③ 進捗率だけ手入力するタスク ----
+
+/*
+ * complete はスケジューラに一切影響しない。
+ * レポートの complete / gauge 列とガントチャートの塗り分けに使われるだけの
+ * ドキュメント用途。TODO リスト的な簡易管理向け。
+ * 正確に追跡したいなら booking を使う。
+ */
+task rough "③ 進捗率のみ手入力" {
+  effort 5d
+  allocate carol
+  complete 60
+}
+
+// ---- ④ 未着手のタスク ----
+
+task pending "④ 未着手 (②の完了待ち)" {
+  effort 5d
+  allocate alice
+  depends !delayed
+}
+
+// ---- レポート ----
+
+/*
+ * complete 列は進捗率、gauge 列はそれをグラフィカルなゲージで表示する。
+ * ガントチャートでは now の位置に縦線が入り、
+ * 完了済みの部分が濃い色で塗られる。
+ */
+taskreport progress "progress" {
+  formats html
+  headline "実績を反映したスケジュール (now = 2026-08-17)"
+  columns name, start, end, effort, complete, gauge, chart
+}
+
+resourcereport people "people" {
+  formats html
+  headline "リソース別の実績と予定"
+  columns name, effort, chart
+  loadunit days
+}

@@ -1,0 +1,45 @@
+/*
+ * TaskJuggler 最小サンプル
+ *
+ * 実行: bundle exec tj3 -o 01-hello/out 01-hello/hello.tjp
+ */
+
+// project <ID> "名前" <開始日> <期間 or 終了日> { ... }
+project hello "Hello TaskJuggler" 2026-08-03 +2m {
+  timezone "Asia/Tokyo"
+  timeformat "%Y-%m-%d"
+  // "今日" の位置。進捗の基準線になる
+  now 2026-07-29
+}
+
+// リソース (人・設備)
+resource alice "Alice"
+resource bob   "Bob"
+
+// タスク
+task design "設計" {
+  // effort = 人的工数。担当者が割り当たって初めて期間が決まる
+  effort 5d
+  allocate alice
+}
+
+task impl "実装" {
+  // ! は「同じ階層の兄弟」を指す。design が終わってから開始
+  depends !design
+  effort 10d
+  allocate bob
+}
+
+task review "レビュー" {
+  depends !impl
+  // duration = 担当者に関係なく経過時間で決まる期間 (暦日)
+  duration 3d
+}
+
+// レポート定義: 出力ファイル名 (拡張子は formats が付ける)
+// 出力先ディレクトリは tj3 の -o オプションで指定する
+taskreport overview "overview" {
+  formats html
+  headline "Hello TaskJuggler - 全体像"
+  columns name, start, end, effort, chart
+}

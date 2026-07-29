@@ -1,0 +1,19 @@
+# Bundler
+# インストール先の設定 (.bundle/config) だけは共有したいので追跡する。
+# グローバルの gitignore が .bundle ディレクトリごと除外しているため、
+# まずディレクトリの除外を打ち消してから中身を除外する
+# (親ディレクトリが除外されたままだと否定パターンが効かない)。
+!/.bundle/
+/.bundle/*
+!/.bundle/config
+/vendor/bundle/
+
+# TaskJuggler が生成するレポート
+# tj3 を実行すればいつでも再生成できる
+out/
+
+# OS / エディタ
+.DS_Store
+*~
+*.swp
+*.swo
